@@ -327,8 +327,8 @@ footer { border-top: 1px solid var(--rule); padding-top: 20px; font-size: 0.85re
       <div class="eyebrow">Reproduce</div>
       <h2>Scripts and outputs</h2>
     </div>
-    <pre>python3 pipeline/phase1/profile_csvs.py . reports/phase1
-python3 pipeline/phase1/berth_audit.py  . reports/phase1</pre>
+    <pre>python -m pipeline.phase1.profile_csvs data/raw reports/phase1
+python -m pipeline.phase1.berth_audit  data/raw reports/phase1</pre>
     <div class="table-wrap">
       <table>
         <thead><tr><th>File in <code>reports/phase1/</code></th><th>Contents</th></tr></thead>
