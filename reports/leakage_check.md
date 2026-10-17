@@ -20,6 +20,11 @@ Prediction time t = arrival + elapsed hours. The label is departure − t.
 | `vessel_prev_mean_log_stay` | Mean log1p stay of those earlier visits. |
 | `vessel_prev_visits_port` | Earlier visits by this ship to this port. |
 | `vessel_prev_mean_log_stay_port` | Mean log1p stay of earlier visits to this port. |
+| `vessel_last_stay_port_h` | Length of this ship's previous stay in this port (ended before this arrival). |
+| `vessel_median_stay_port_h` | Median of this ship's earlier stays in this port. |
+| `hours_since_last_visit_port` | Hours since this ship last left this port (liner rotation). |
+| `vessel_prev_visits_berth` | Earlier visits by this ship to this berth. |
+| `vessel_median_stay_berth_h` | Median of this ship's earlier stays at this berth. |
 | `med_total_berth_type` | Training-period median stay at this berth for this vessel type (fitted on train only). |
 | `med_total_berth` | Training-period median stay at this berth (train only). |
 | `med_total_port` | Training-period median stay in this port (train only). |

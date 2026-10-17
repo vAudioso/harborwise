@@ -8,11 +8,12 @@ import argparse
 import time
 
 from pipeline import (build_dataset, build_features, evaluate, simulate, train_classification, train_quantile,
-                      train_regression)
+                      train_regression, train_turnaround)
 
 STEPS = [
     ("build_dataset", lambda q: build_dataset.main()),             # BE1: raw CSVs -> berth visits (Phase 1–2)
     ("build_features", lambda q: build_features.main()),           # BE2: checkpoint dataset + leakage report
+    ("train_turnaround", lambda q: train_turnaround.main()),       # BE2: turnaround at arrival, RF/HGB/GB vs medians
     ("train_regression", lambda q: train_regression.main(q)),      # BE2: E00–E07
     ("train_classification", lambda q: train_classification.main(q)),  # BE3: E08–E09
     ("train_quantile", lambda q: train_quantile.main()),           # BE3: clearance window

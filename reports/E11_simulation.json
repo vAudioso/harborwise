@@ -10,14 +10,14 @@
     "total_cost_usd": 303123396.335153
   },
   "harborwise": {
-    "mean_wait_h": 13.122332614312693,
+    "mean_wait_h": 13.12260760921383,
     "share_waiting": 0.4936075597554197,
-    "mean_idle_h": 5.073681649760232,
-    "mean_time_to_berth_h": 31.65984780688456,
-    "total_fuel_t": 92492.86582247508,
-    "total_co2_t": 288022.7841711874,
-    "mean_speed_kn": 12.442884936075597,
-    "total_cost_usd": 295642247.4442713
+    "mean_idle_h": 5.016326395471183,
+    "mean_time_to_berth_h": 31.60249255259551,
+    "total_fuel_t": 93221.44963694923,
+    "total_co2_t": 290291.5941694599,
+    "mean_speed_kn": 12.486242356864924,
+    "total_cost_usd": 295432356.71880925
   },
   "oracle": {
     "mean_wait_h": 12.253874676036117,
@@ -31,75 +31,75 @@
   },
   "scenarios": 3598,
   "harborwise_vs_baseline": {
-    "fuel_saving_pct": 17.02638052083294,
-    "co2_saving_t": 59102.94805446768,
-    "wait_reduction_pct": 15.448828023810302,
-    "extra_idle_h_per_call": 0.5228318507964476,
-    "extra_time_to_berth_h_per_call": 0.5228318507964502,
-    "cost_saving_pct": 2.468020938446469,
-    "share_of_oracle_cost_saving_captured": 0.5551704492476593
+    "fuel_saving_pct": 16.372781611951826,
+    "co2_saving_t": 56834.13805619517,
+    "wait_reduction_pct": 15.447056148194738,
+    "extra_idle_h_per_call": 0.4654765965073988,
+    "extra_time_to_berth_h_per_call": 0.4654765965074006,
+    "cost_saving_pct": 2.5372636059540654,
+    "share_of_oracle_cost_saving_captured": 0.5707462825918834
   },
   "by_type": {
     "bulk": {
       "scenarios": 393.0,
-      "fuel_saving_pct": 33.85,
+      "fuel_saving_pct": 33.38,
       "baseline_mean_wait_h": 34.1,
-      "harborwise_mean_wait_h": 29.68
+      "harborwise_mean_wait_h": 29.7
     },
     "cont": {
       "scenarios": 959.0,
-      "fuel_saving_pct": 10.88,
+      "fuel_saving_pct": 10.65,
       "baseline_mean_wait_h": 5.92,
-      "harborwise_mean_wait_h": 4.77
+      "harborwise_mean_wait_h": 4.75
     },
     "crui": {
       "scenarios": 538.0,
-      "fuel_saving_pct": 9.13,
+      "fuel_saving_pct": 8.12,
       "baseline_mean_wait_h": 3.31,
-      "harborwise_mean_wait_h": 2.55
+      "harborwise_mean_wait_h": 2.54
     },
     "gcar": {
       "scenarios": 478.0,
-      "fuel_saving_pct": 16.02,
+      "fuel_saving_pct": 15.1,
       "baseline_mean_wait_h": 17.89,
       "harborwise_mean_wait_h": 15.71
     },
     "tank": {
       "scenarios": 1230.0,
-      "fuel_saving_pct": 31.12,
+      "fuel_saving_pct": 30.58,
       "baseline_mean_wait_h": 21.49,
-      "harborwise_mean_wait_h": 17.96
+      "harborwise_mean_wait_h": 17.98
     }
   },
   "sensitivity": {
     "main (ETA 2\u201330 h)": {
-      "fuel_saving_pct": 17.02638052083294,
-      "co2_saving_t": 59102.94805446768,
-      "wait_reduction_pct": 15.448828023810302,
-      "extra_idle_h_per_call": 0.5228318507964476,
-      "extra_time_to_berth_h_per_call": 0.5228318507964502,
-      "cost_saving_pct": 2.468020938446469,
-      "share_of_oracle_cost_saving_captured": 0.5551704492476593,
+      "fuel_saving_pct": 16.372781611951826,
+      "co2_saving_t": 56834.13805619517,
+      "wait_reduction_pct": 15.447056148194738,
+      "extra_idle_h_per_call": 0.4654765965073988,
+      "extra_time_to_berth_h_per_call": 0.4654765965074006,
+      "cost_saving_pct": 2.5372636059540654,
+      "share_of_oracle_cost_saving_captured": 0.5707462825918834,
       "baseline_mean_wait_h": 15.519989028665444
     },
     "close in (ETA 2\u201312 h)": {
-      "fuel_saving_pct": 32.07572065048959,
-      "co2_saving_t": 59771.713112811674,
-      "wait_reduction_pct": 10.831336036750649,
-      "extra_idle_h_per_call": 0.367332407957108,
-      "extra_time_to_berth_h_per_call": 0.3673324079571074,
-      "cost_saving_pct": 3.6065157257073377,
-      "share_of_oracle_cost_saving_captured": 0.7119127504970876,
+      "fuel_saving_pct": 31.6467522084536,
+      "co2_saving_t": 58972.34904142539,
+      "wait_reduction_pct": 10.816419001817346,
+      "extra_idle_h_per_call": 0.3436006887244577,
+      "extra_time_to_berth_h_per_call": 0.34360068872445737,
+      "cost_saving_pct": 3.6770533393241545,
+      "share_of_oracle_cost_saving_captured": 0.7258366122913128,
       "baseline_mean_wait_h": 20.497527124727974
     },
     "far out (ETA 12\u201348 h)": {
-      "fuel_saving_pct": 10.695501640509287,
-      "co2_saving_t": 52046.877759416995,
-      "wait_reduction_pct": 18.781269339844144,
-      "extra_idle_h_per_call": 0.6285686033282296,
-      "extra_time_to_berth_h_per_call": 0.6285686033282332,
-      "cost_saving_pct": 1.5050401896043897,
-      "share_of_oracle_cost_saving_captured": 0.38360753865786035,
+      "fuel_saving_pct": 10.26143028245584,
+      "co2_saving_t": 49934.58235983469,
+      "wait_reduction_pct": 19.129958650663724,
+      "extra_idle_h_per_call": 0.5700182093546733,
+      "extra_time_to_berth_h_per_call": 0.5700182093546786,
+      "cost_saving_pct": 1.5675347019547092,
+      "share_of_oracle_cost_saving_captured": 0.3995362601816588,
       "baseline_mean_wait_h": 11.071444808383292
     }
   },

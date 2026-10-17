@@ -6,37 +6,37 @@
   ],
   "tuned_params": {
     "max_depth": 8,
-    "min_child_weight": 5,
-    "subsample": 0.6,
+    "min_child_weight": 20,
+    "subsample": 0.8,
     "colsample_bytree": 0.5,
-    "reg_alpha": 1,
-    "reg_lambda": 10
+    "reg_alpha": 0,
+    "reg_lambda": 0.5
   },
   "conformal_shift_log_space": [
-    -0.0323467101538526,
-    0.005966866899242085,
-    0.1351127479033538
+    -0.03653639286974819,
+    0.004513833796447653,
+    0.1350066790383604
   ],
   "val_uncalibrated": {
-    "coverage_p25": 0.2736293994165917,
-    "pinball_p25": 5.114084478899599,
-    "coverage_p50": 0.49409776178402987,
-    "pinball_p50": 7.679630219655566,
-    "coverage_p90": 0.8471960960715357,
-    "pinball_p90": 5.922881774558189,
-    "interval_p25_p90_coverage": 0.573566696654944,
-    "interval_median_width_h": 24.967510223388672,
-    "coverage": 0.8471960960715357
+    "coverage_p25": 0.2772825168343284,
+    "pinball_p25": 5.035009714392479,
+    "coverage_p50": 0.49480657561135194,
+    "pinball_p50": 7.567261543600238,
+    "coverage_p90": 0.8474959788446335,
+    "pinball_p90": 5.883499470683374,
+    "interval_p25_p90_coverage": 0.5702134620103051,
+    "interval_median_width_h": 24.24674415588379,
+    "coverage": 0.8474959788446335
   },
   "val_calibrated": {
-    "coverage_p25": 0.2500204465527112,
-    "pinball_p25": 5.107791839487341,
-    "coverage_p50": 0.4999863689648592,
-    "pinball_p50": 7.676912506979942,
-    "coverage_p90": 0.8999754641367466,
-    "pinball_p90": 5.594556468918348,
-    "interval_p25_p90_coverage": 0.6499550175840353,
-    "interval_median_width_h": 31.74039565296748,
-    "coverage": 0.8999754641367466
+    "coverage_p25": 0.2499931844824296,
+    "pinball_p25": 5.024407158310579,
+    "coverage_p50": 0.5000136310351408,
+    "pinball_p50": 7.565315335272787,
+    "coverage_p90": 0.9000027262070281,
+    "pinball_p90": 5.558137657925155,
+    "interval_p25_p90_coverage": 0.6500095417245986,
+    "interval_median_width_h": 31.249391830837187,
+    "coverage": 0.9000027262070281
   }
 }

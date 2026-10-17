@@ -1,21 +1,21 @@
 {
-  "model": "XGBoost tuned trial 04",
+  "model": "XGBoost tuned trial 16",
   "estimator": "XGBRegressor",
   "log_target": false,
   "xgb_best_params": {
     "max_depth": 8,
     "learning_rate": 0.05,
-    "min_child_weight": 5,
-    "subsample": 0.6,
+    "min_child_weight": 20,
+    "subsample": 0.8,
     "colsample_bytree": 0.5,
-    "reg_alpha": 1,
-    "reg_lambda": 10
+    "reg_alpha": 0,
+    "reg_lambda": 0.5
   },
   "dropped_gt_7d_from_train": true,
   "val_metrics": {
-    "mae": 15.306323091296628,
-    "rmse": 34.18937337915027,
-    "medae": 7.116980090671115
+    "mae": 15.093327155676757,
+    "rmse": 34.06866916074557,
+    "medae": 6.963914322323269
   },
   "baseline_val_metrics": {
     "mae": 16.871709649864144,
@@ -39,6 +39,11 @@
     "vessel_prev_mean_log_stay",
     "vessel_prev_visits_port",
     "vessel_prev_mean_log_stay_port",
+    "vessel_last_stay_port_h",
+    "vessel_median_stay_port_h",
+    "hours_since_last_visit_port",
+    "vessel_prev_visits_berth",
+    "vessel_median_stay_berth_h",
     "med_total_berth_type",
     "med_total_berth",
     "med_total_port",

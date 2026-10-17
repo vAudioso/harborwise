@@ -27,7 +27,7 @@
   "inputs": [
     {
       "id": "step", "type": "pickString", "description": "Pipeline step",
-      "options": ["build_dataset", "build_features", "train_regression", "train_classification", "train_quantile", "evaluate", "simulate"]
+      "options": ["build_dataset", "build_features", "train_turnaround", "train_regression", "train_classification", "train_quantile", "evaluate", "simulate"]
     }
   ]
 }

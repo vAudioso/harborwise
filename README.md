@@ -41,6 +41,7 @@ tests/               unit tests, leakage tests, API end-to-end tests
 |---|---|---|---|
 | `build_dataset` | BE1 | Profiles all CSVs. Rebuilds berth visits by testing stop positions against berth polygons, then merges stays split by gaps under 1 h. Keeps commercial ships with conf ≥ 0.5. | `data/processed/*.parquet`, `reports/phase1/` |
 | `build_features` | BE2 | Builds checkpoint rows at 1/3/6/12/24 h alongside, labelled with hours left. Uses leakage-safe congestion and vessel-history features and a purged chronological split. | `checkpoints.parquet`, `reports/leakage_check.md` |
+| `train_turnaround` | BE2 | Turnaround time predicted at arrival: Random Forest, HistGradientBoosting and GradientBoosting vs global and port medians. | `models/turnaround.*`, `reports/turnaround_comparison.md` |
 | `train_regression` | BE2 | E00 baselines → E07 tuned XGBoost. | `models/regressor.*` |
 | `train_classification` | BE3 | "Clears within 6 h": E08 class balance, then E09 class weights plus six resampling strategies × 3 models, with isotonic calibration and threshold choice. | `models/classifier.*` |
 | `train_quantile` | BE3 | P25/P50/P90 clearance window: XGBoost multi-quantile with a conformal shift. | `models/quantile.*` |
@@ -53,14 +54,32 @@ tests/               unit tests, leakage tests, API end-to-end tests
 
 These are test-set numbers (Nov–Dec 2019). Validation decided everything; the test set was used once.
 
+#### Turnaround time predicted at arrival
+
+How long will a ship stay alongside, predicted the moment it berths? Test set: 9,558 visits, median stay 22.6 h.
+
+| Model | MAE (h) | RMSE (h) | Within 1 h |
+|---|---:|---:|---:|
+| Global median | 21.32 | 39.11 | 4.1% |
+| Port median | 17.67 | 35.90 | 9.2% |
+| **Random Forest** | **13.38** | **30.89** | 15.2% |
+| HistGradientBoosting | 13.50 | 31.06 | 15.9% |
+| GradientBoosting | 13.52 | 30.95 | 15.2% |
+
+Random Forest beats the port median by 24% and the global median by 37%. Accuracy varies a lot by ship type. Cruise ships, which run fixed schedules, have a median error of 0.9 h, and 52% are within 1 h. Bulk carriers have a median error of 15.6 h.
+
+An average error under 1 hour isn't reachable with this data. The dataset has no cargo volumes, crane or labour plans, or schedules, which are what decide when a ship leaves. See `reports/turnaround_comparison.md`.
+
+#### Remaining time and other models
+
 | | Result |
 |---|---|
 | Training data | 51,729 commercial berth visits, 6,218 ships, 832 berths, 159 ports → 212k checkpoint rows |
-| **Remaining time, MAE** | **14.84 h** for XGBoost vs 16.56 h for the best baseline (berth median × checkpoint): **10.4% better**. Excluding stays over 7 days: 12.39 h. |
-| Unseen ports (31 held out) | Model 18.7 h vs baseline 15.8 h. **The model does not generalise to new ports.** Use it for ports it has seen. |
-| **Clears within 6 h** | Random forest with class weights, isotonic-calibrated. PR-AUC 0.64 (positive rate 14.7%), precision 0.54, recall 0.70, ECE 0.007 |
-| **Clearance window coverage** | P25 23.7% · P50 47.9% · P90 89.4% (targets 25/50/90) |
-| **Speed simulation (E11, SIMULATED)** | Fuel −17%, anchorage wait −15%, berth idle +0.5 h per call. Captures 56% of a perfect forecast's cost saving. |
+| **Remaining time, MAE** | **14.55 h** for XGBoost (RMSE 32.5 h) vs 16.56 h for the best baseline (berth median × checkpoint): **12.1% better**. Excluding stays over 7 days: 12.12 h. |
+| Unseen ports (31 held out) | Model 17.4 h vs baseline 15.8 h. **The model does not generalise to new ports.** Use it for ports it has seen. |
+| **Clears within 6 h** | Random forest with class weights, isotonic-calibrated. PR-AUC 0.66 (positive rate 14.7%), precision 0.57, recall 0.69, ECE 0.009 |
+| **Clearance window coverage** | P25 23.7% · P50 48.8% · P90 89.6% (targets 25/50/90) |
+| **Speed simulation (E11, SIMULATED)** | Fuel −16%, anchorage wait −15%, berth idle +0.5 h per call. Captures 57% of a perfect forecast's cost saving. |
 
 What the imbalance experiments found (E08–E09): class weighting and random oversampling helped the random forest's F1 a little, while SMOTE and Tomek links brought no gain over plain class weights. Resampling distorts probabilities (see `reports/figures/classification_pr_calibration.png`), which is why the chosen model is recalibrated on untouched validation data. Scaling (E04) makes no measurable difference: Ridge is effectively scale-invariant here and tree models are invariant by construction.
 

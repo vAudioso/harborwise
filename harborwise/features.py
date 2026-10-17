@@ -30,6 +30,11 @@ FEATURE_DOCS = {
     "vessel_prev_mean_log_stay": "Mean log1p stay of those earlier visits.",
     "vessel_prev_visits_port": "Earlier visits by this ship to this port.",
     "vessel_prev_mean_log_stay_port": "Mean log1p stay of earlier visits to this port.",
+    "vessel_last_stay_port_h": "Length of this ship's previous stay in this port (ended before this arrival).",
+    "vessel_median_stay_port_h": "Median of this ship's earlier stays in this port.",
+    "hours_since_last_visit_port": "Hours since this ship last left this port (liner rotation).",
+    "vessel_prev_visits_berth": "Earlier visits by this ship to this berth.",
+    "vessel_median_stay_berth_h": "Median of this ship's earlier stays at this berth.",
     "med_total_berth_type": "Training-period median stay at this berth for this vessel type (fitted on train only).",
     "med_total_berth": "Training-period median stay at this berth (train only).",
     "med_total_port": "Training-period median stay in this port (train only).",
@@ -40,7 +45,9 @@ FEATURE_DOCS = {
 BASE_COLS = ["elapsed_h", "hour", "weekday", "month", "hurricane_season", "arrival_hour", "vt_code"]
 CONTEXT_COLS = ["port_occupancy", "berth_occupancy_others", "port_arrivals_24h_all", "port_departures_24h_comm",
                 "port_arrivals_7d_comm", "vessel_prev_visits", "vessel_prev_mean_log_stay",
-                "vessel_prev_visits_port", "vessel_prev_mean_log_stay_port"]
+                "vessel_prev_visits_port", "vessel_prev_mean_log_stay_port", "vessel_last_stay_port_h",
+                "vessel_median_stay_port_h", "hours_since_last_visit_port", "vessel_prev_visits_berth",
+                "vessel_median_stay_berth_h"]
 STAT_COLS = ["med_total_berth_type", "med_total_berth", "med_total_port", "med_remaining_cp", "log_berth_train_visits"]
 RAW_KEYS = ["berth_id", "port_id", "vesseltype"]
 
@@ -92,8 +99,12 @@ def context_features(points: pd.DataFrame, visits: pd.DataFrame, port_calls: pd.
 
 
 def vessel_history(visits: pd.DataFrame) -> pd.DataFrame:
-    """Per visit: stats of the same ship's earlier visits that ended before this arrival."""
-    v = visits[["visit_id", "vessel_id", "port_id", "arrival_time", "departure_time", "duration_hours"]].copy()
+    """Per visit: stats of the same ship's earlier visits that ended before this arrival.
+
+    Liner services (container, cruise) repeat the same port/berth on a schedule, so the ship's
+    own previous stays at this port and berth are the strongest signals available at arrival.
+    """
+    v = visits[["visit_id", "vessel_id", "port_id", "berth_id", "arrival_time", "departure_time", "duration_hours"]].copy()
     v = v.sort_values(["vessel_id", "arrival_time"])
     v["log_stay"] = np.log1p(v["duration_hours"])
     out = pd.DataFrame(index=v.index)
@@ -103,11 +114,18 @@ def vessel_history(visits: pd.DataFrame) -> pd.DataFrame:
         csum = g["log_stay"].cumsum() - v["log_stay"]
         out["vessel_prev_visits" + suffix] = n_prev
         out["vessel_prev_mean_log_stay" + suffix] = (csum / n_prev.replace(0, np.nan))
+    gp = v.groupby(["vessel_id", "port_id"], sort=False)
+    out["vessel_last_stay_port_h"] = gp["duration_hours"].shift()
+    out["vessel_median_stay_port_h"] = gp["duration_hours"].transform(lambda s: s.expanding().median().shift())
+    out["hours_since_last_visit_port"] = (v["arrival_time"] - gp["departure_time"].shift()).dt.total_seconds() / 3600
+    gb = v.groupby(["vessel_id", "berth_id"], sort=False)
+    out["vessel_prev_visits_berth"] = gb.cumcount()
+    out["vessel_median_stay_berth_h"] = gb["duration_hours"].transform(lambda s: s.expanding().median().shift())
     # A ship cannot be alongside twice at once, but MMSI errors exist: drop history whose last
     # visit had not ended by this arrival.
     prev_dep = v.groupby("vessel_id")["departure_time"].shift()
     bad = prev_dep > v["arrival_time"]
-    out.loc[bad, ["vessel_prev_visits", "vessel_prev_mean_log_stay"]] = np.nan
+    out.loc[bad, [c for c in out.columns]] = np.nan
     out["visit_id"] = v["visit_id"]
     return out.reset_index(drop=True)
 
@@ -121,9 +139,10 @@ def time_features(t: pd.Series, arrival: pd.Series) -> pd.DataFrame:
     }, index=t.index)
 
 
-def build_checkpoints(visits: pd.DataFrame, port_calls: pd.DataFrame) -> pd.DataFrame:
+def build_checkpoints(visits: pd.DataFrame, port_calls: pd.DataFrame, checkpoints=CHECKPOINTS_H) -> pd.DataFrame:
+    """checkpoints=(0,) gives one row per visit at arrival, labelled with the full turnaround time."""
     rows = []
-    for cp in CHECKPOINTS_H:
+    for cp in checkpoints:
         v = visits[visits["duration_hours"] > cp].copy()
         v["elapsed_h"] = float(cp)
         v["t"] = v["arrival_time"] + pd.to_timedelta(cp, unit="h")
