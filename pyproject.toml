@@ -1,0 +1,13 @@
+[project]
+name = "portpulse"
+version = "1.0.0"
+description = "PortPulse backend: berth-clearance prediction and arrival-speed optimisation (IBM Z Datathon)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+filterwarnings = ["ignore::UserWarning", "ignore::DeprecationWarning", "ignore::FutureWarning"]
+
+[tool.ruff]
+line-length = 140

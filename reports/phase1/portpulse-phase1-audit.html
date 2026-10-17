@@ -1,0 +1,350 @@
+<title>PortPulse Phase 1 Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: single reading column like a survey report; wide tables scroll in their own frame; funnel chart drawn to scale */
+:root {
+  --bg: #f3f6f8;
+  --paper: #ffffff;
+  --ink: #14222e;
+  --muted: #586977;
+  --rule: #d5dee5;
+  --accent: #0b5f8a;       /* chart-datum blue */
+  --accent-soft: #e2eef5;
+  --go: #1d7a4c;
+  --go-soft: #e1f2e8;
+  --warn: #9a5b00;
+  --warn-soft: #fbefd9;
+  --stop: #b0312b;
+  --stop-soft: #f9e3e1;
+  --bar-dim: #b9c8d3;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d151c; --paper: #141f28; --ink: #e3eaf0; --muted: #93a4b2; --rule: #2a3a47;
+    --accent: #6cb6df; --accent-soft: #16303f; --go: #6fcf98; --go-soft: #15301f;
+    --warn: #e6b45c; --warn-soft: #33270f; --stop: #ef8a83; --stop-soft: #3a1a18; --bar-dim: #3b4f5e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d151c; --paper: #141f28; --ink: #e3eaf0; --muted: #93a4b2; --rule: #2a3a47;
+  --accent: #6cb6df; --accent-soft: #16303f; --go: #6fcf98; --go-soft: #15301f;
+  --warn: #e6b45c; --warn-soft: #33270f; --stop: #ef8a83; --stop-soft: #3a1a18; --bar-dim: #3b4f5e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 400 16px/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+main { max-width: 860px; margin: 0 auto; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.5rem; font-weight: 600; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code { font-family: var(--f-mono); font-size: 0.86em; background: var(--accent-soft); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+.num, td.n, th.n { font-variant-numeric: tabular-nums; }
+.eyebrow { font: 500 0.75rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+header { display: grid; gap: 14px; border-bottom: 1px solid var(--rule); padding-bottom: 28px; }
+header .lede { font-size: 1.1rem; color: var(--muted); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 20px; font: 400 0.82rem/1.4 var(--f-mono); color: var(--muted); }
+
+.verdict { background: var(--paper); border: 1px solid var(--rule); border-left: 4px solid var(--go); border-radius: 6px; padding: 22px 24px; display: grid; gap: 14px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 600 0.78rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; width: fit-content; }
+.pill.go { background: var(--go-soft); color: var(--go); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.stop { background: var(--stop-soft); color: var(--stop); }
+.verdict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.verdict-grid > div { display: grid; gap: 6px; align-content: start; min-width: 0; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.stat { background: var(--paper); padding: 16px 18px; display: grid; gap: 4px; }
+.stat b { font: 600 1.6rem/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.85rem; color: var(--muted); }
+
+section { display: grid; gap: 16px; min-width: 0; }
+section > .sec-head { display: grid; gap: 4px; }
+
+/* Funnel drawn to scale: width = rows / 1,488,781 */
+.funnel { display: grid; gap: 10px; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 20px; }
+.frow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.flabel { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 0.9rem; }
+.flabel b { font-family: var(--f-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.track { height: 14px; background: var(--accent-soft); border-radius: 2px; overflow: hidden; }
+.bar { height: 100%; background: var(--bar-dim); }
+.bar.final { background: var(--accent); }
+.fnote { font-size: 0.82rem; color: var(--muted); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 500 0.72rem/1.3 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); white-space: nowrap; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+tr.hl td { background: var(--accent-soft); font-weight: 500; }
+tr.dim td { color: var(--muted); }
+
+ul.clean { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 70ch; }
+.callout { border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; }
+.callout.warn { background: var(--warn-soft); }
+.callout.warn h3 { color: var(--warn); }
+.callout p, .callout li { color: var(--ink); }
+
+.team { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.role { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.role .tag { font: 600 0.8rem/1 var(--f-mono); color: var(--accent); }
+.role p { font-size: 0.92rem; }
+
+pre { margin: 0; font: 400 0.85rem/1.5 var(--f-mono); background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; overflow-x: auto; }
+footer { border-top: 1px solid var(--rule); padding-top: 20px; font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow">IBM Z Datathon · PortPulse · BE1 · Phase 1</div>
+    <h1>Can we predict when a berth will be free?</h1>
+    <p class="lede">An audit of the 2019 Caribbean AIS port-call data. It checks what each record means, whether berth visits can be rebuilt from it, and what the models can safely train on.</p>
+    <div class="meta">
+      <span>13 CSVs · 1,488,781 port calls</span>
+      <span>Full table, no sampling</span>
+      <span>Timestamps: UTC (inferred)</span>
+      <span>CRS: EPSG:4326</span>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <span class="pill go">● Go, with a narrowed scope</span>
+    <div class="verdict-grid">
+      <div>
+        <h3>Commercial ships: yes</h3>
+        <p>Tankers, container, bulk, general cargo and cruise ships give 51,747 berth visits. For these ships a berth polygon works like one slot.</p>
+      </div>
+      <div>
+        <h3>Everything else: no</h3>
+        <p>93% of matched calls come from tugs, service craft or vessels with no known type. Their berths are shared zones, not slots.</p>
+      </div>
+      <div>
+        <h3>Anchorage wait: not in the data</h3>
+        <p>Port calls only cover stops near quays. BE4 must model waiting time, because no historical record exists to check it against.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>51,747</b><span>commercial berth visits</span></div>
+    <div class="stat"><b>6,218</b><span>ships</span></div>
+    <div class="stat"><b>131</b><span>berths with ≥100 visits</span></div>
+    <div class="stat"><b>23.1 h</b><span>median stay at berth</span></div>
+    <div class="stat"><b>0.994</b><span>match with published berth counts</span></div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">From raw calls to training labels</div>
+      <h2>Where the rows go</h2>
+    </div>
+    <div class="funnel" role="img" aria-label="Bar chart of rows kept at each step, drawn to scale">
+      <div class="frow"><div class="flabel"><span>All port calls</span><b>1,488,781</b></div><div class="track"><div class="bar" style="width:100%"></div></div></div>
+      <div class="frow"><div class="flabel"><span>With coordinates</span><b>1,121,003</b></div><div class="track"><div class="bar" style="width:75.30%"></div></div></div>
+      <div class="frow"><div class="flabel"><span>Inside a berth polygon</span><b>914,989</b></div><div class="track"><div class="bar" style="width:61.46%"></div></div></div>
+      <div class="frow"><div class="flabel"><span>Merged into visits (gaps &lt; 1 h)</span><b>781,632</b></div><div class="track"><div class="bar" style="width:52.50%"></div></div></div>
+      <div class="frow"><div class="flabel"><span>Commercial ships only</span><b>62,530</b></div><div class="track"><div class="bar" style="width:4.20%"></div></div></div>
+      <div class="frow"><div class="flabel"><span>Confidence ≥ 0.5 (training set)</span><b>51,747</b></div><div class="track"><div class="bar final" style="width:3.48%"></div></div></div>
+      <p class="fnote">Bar widths are to scale against all 1,488,781 calls.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Record semantics</div>
+      <h2>What one port call means</h2>
+    </div>
+    <p>A port call starts when a ship's speed over ground drops below <b>0.5 knots</b> and ends when it rises back above it. Only AIS messages <b>within about 600 m of a surveyed quay or wharf</b> count. It is a stop alongside a quay, recorded at port level. It is not an anchorage stop, and it does not name the berth. We recover the berth by testing the stop position against berth polygons. Joined that way, <code>ts_start</code> and <code>ts_end</code> work as berth entry and exit.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>ts_start</code> / <code>ts_end</code></td><td>Speed falls below / rises above 0.5 kn near a quay. The authors already merge raw calls split by short gaps.</td></tr>
+          <tr><td><code>duration</code></td><td><code>ts_end − ts_start</code> in seconds. Matches for all but 173 rows.</td></tr>
+          <tr><td><code>nb_mes</code></td><td>AIS messages received during the stop</td></tr>
+          <tr><td><code>time_bef</code> / <code>time_aft</code></td><td>Seconds to the nearest message before the start or after the end: how uncertain each edge is</td></tr>
+          <tr><td><code>conf</code></td><td>The authors' 0–1 credibility score for the duration. They don't publish the formula.</td></tr>
+          <tr><td><code>latitude</code> / <code>longitude</code></td><td>Mean position while stopped (WGS84)</td></tr>
+          <tr><td><code>port</code></td><td>Port ID only. There is no berth column.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>Timezone.</b> The paper doesn't state one. Arrivals reach their minimum at 06–08 UTC (01–03 local time in the Caribbean) and peak between 12 and 23 UTC. That fits UTC timestamps.</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Raw data quality</div>
+      <h2>Problems found, and what we did</h2>
+    </div>
+    <p>Nothing is deleted silently. Questionable rows are flagged, so BE2 can test the model with and without them.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Finding</th><th class="n">Rows</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Missing coordinates</td><td class="n">367,778</td><td>Can't be placed at a berth. Excluded.</td></tr>
+          <tr><td><code>conf = 0</code> (87% have no messages; median 10 min)</td><td class="n">166,162</td><td>Excluded</td></tr>
+          <tr><td><code>conf &lt; 0.5</code></td><td class="n">264,569</td><td>Flagged <code>flag_low_conf</code></td></tr>
+          <tr><td>Stays over 7 days (likely lay-ups)</td><td class="n">21,861</td><td>Flagged <code>flag_gt_7d</code></td></tr>
+          <tr><td>Start or end edge uncertain by more than 1 h</td><td class="n">4.7% / 2.8%</td><td>Flagged <code>flag_edge_uncertain_gt_1h</code></td></tr>
+          <tr><td>Visit cut off at the year boundary</td><td class="n">4,034</td><td>Flagged <code>flag_year_censored</code>. Exclude from labels.</td></tr>
+          <tr><td>Same ship in two ports at once (wrong MMSI)</td><td class="n">2,750</td><td>Flagged <code>flag_overlap_prev</code></td></tr>
+          <tr><td>Zero duration</td><td class="n">3,559</td><td>Flagged. Only 51 remain after berth matching.</td></tr>
+          <tr><td>Berth codes used by two different polygons</td><td class="n">11 codes</td><td>Key berths by code + row id (<code>berth_key</code>)</td></tr>
+          <tr><td>Berth port names that differ from <code>ports.csv</code></td><td class="n">16 names</td><td>Cosmetic. Join on <code>portid</code>, never on name.</td></tr>
+          <tr><td><code>time_aft</code> missing (55% in Jan, rising to 65% in Sep)</td><td class="n">60.5%</td><td>Documented as "where applicable". Noted.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Geometry</div>
+      <h2>Berth matching on the full table</h2>
+    </div>
+    <ul class="clean">
+      <li>Port calls, berths and ports all use <b>EPSG:4326</b>. Point geometries agree with the lat/lon columns to within 0.000007°.</li>
+      <li><b>82.67%</b> of calls with coordinates at the 251 ports that have berth polygons fall inside a polygon. This agrees with the earlier sample estimate of 81.63%.</li>
+      <li>Our per-berth call counts correlate at <b>0.994</b> with the published <code>berths.number</code>, with a median ratio of exactly 1.00. We reproduced the dataset authors' own berth assignment.</li>
+      <li>78,753 unmatched points lie within 50 m of a polygon, and 150,018 within 200 m. A small buffer would recover many of them. That is BE2's decision, and no buffer is applied yet.</li>
+      <li>Polygon sizes range from about 760 m² (10th percentile) to 1.6 km² (99th percentile). The largest "berths" are whole basins.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Scope decision</div>
+      <h2>Who generates the calls</h2>
+    </div>
+    <p>Most calls come from small craft that stop and start constantly around the harbour. PortPulse is about large ships waiting for a berth, so the models should train on commercial types only.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Vessel type</th><th class="n">Matched calls</th><th class="n">Ships</th><th class="n">Median stay</th><th class="n">Fragmented</th><th>Use as label</th></tr></thead>
+        <tbody>
+          <tr class="dim"><td>Unknown (no registry type)</td><td class="n">531,354</td><td class="n">7,632</td><td class="n">3.1 h</td><td class="n">35%</td><td><span class="pill stop">No</span></td></tr>
+          <tr class="dim"><td>Service (tugs, pilots, supply)</td><td class="n">277,392</td><td class="n">2,827</td><td class="n">4.2 h</td><td class="n">38%</td><td><span class="pill stop">No</span></td></tr>
+          <tr class="dim"><td>Inter-island</td><td class="n">40,710</td><td class="n">402</td><td class="n">0.6 h</td><td class="n">28%</td><td><span class="pill stop">No</span></td></tr>
+          <tr><td>Tanker</td><td class="n">24,255</td><td class="n">2,676</td><td class="n">31.6 h</td><td class="n">8%</td><td><span class="pill go">Yes</span></td></tr>
+          <tr><td>Container</td><td class="n">20,540</td><td class="n">897</td><td class="n">14.0 h</td><td class="n">8%</td><td><span class="pill go">Yes</span></td></tr>
+          <tr><td>Bulk</td><td class="n">7,333</td><td class="n">2,064</td><td class="n">49.7 h</td><td class="n">9%</td><td><span class="pill go">Yes</span></td></tr>
+          <tr><td>General cargo</td><td class="n">6,985</td><td class="n">657</td><td class="n">24.3 h</td><td class="n">8%</td><td><span class="pill go">Yes</span></td></tr>
+          <tr><td>Cruise</td><td class="n">6,420</td><td class="n">381</td><td class="n">9.8 h</td><td class="n">4%</td><td><span class="pill go">Yes</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fnote" style="font-size:.85rem;color:var(--muted)">Vessel types are known for 47% of ships. The original and enriched type tables don't overlap or conflict. The unknown-type ships behave like small craft, but that is not verified. They may still be useful as a harbour-busyness feature.</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Calls → visits</div>
+      <h2>Merging split stays</h2>
+    </div>
+    <p>A ship that shifts slightly at its berth can produce several calls. Consecutive calls by the same ship at the same berth are separated by a median gap of 1.19 h. Merging at 0.5 h changes nothing, which shows the authors already merge gaps under about 30 minutes. For commercial ships the result barely moves beyond 1 h, so the label holds up whichever threshold we pick.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Merge gaps under</th><th class="n">Visits (all)</th><th class="n">Commercial visits</th><th class="n">Commercial median stay</th><th class="n">Commercial visits from &gt;1 call</th></tr></thead>
+        <tbody>
+          <tr><td>0.5 h</td><td class="n">914,989</td><td class="n">65,533</td><td class="n">21.2 h</td><td class="n">0%</td></tr>
+          <tr class="hl"><td>1 h (chosen)</td><td class="n">781,632</td><td class="n">62,530</td><td class="n">22.5 h</td><td class="n">3.5%</td></tr>
+          <tr><td>2 h</td><td class="n">708,823</td><td class="n">61,520</td><td class="n">22.9 h</td><td class="n">4.1%</td></tr>
+          <tr><td>3 h</td><td class="n">686,089</td><td class="n">61,273</td><td class="n">23.0 h</td><td class="n">4.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Is a berth polygon a single slot?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ships counted</th><th class="n">Berths analysed</th><th class="n">Never shared</th><th class="n">Median max at once</th><th class="n">90th pct max at once</th></tr></thead>
+        <tbody>
+          <tr class="dim"><td>All vessels</td><td class="n">1,662</td><td class="n">280</td><td class="n">3</td><td class="n">8</td></tr>
+          <tr class="hl"><td>Commercial, conf ≥ 0.5</td><td class="n">688</td><td class="n">395</td><td class="n">1</td><td class="n">3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>For commercial ships, "the berth is free" is a clean yes/no for most berths. The 138 berths shared more than 10% of the time need a capacity of 2 or more, with clearance defined as "one slot frees".</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Training set</div>
+      <h2>The commercial berth-visit table</h2>
+    </div>
+    <ul class="clean">
+      <li>51,747 visits by 6,218 ships at 832 berths in 159 ports</li>
+      <li>263 berths have at least 50 visits and 131 have at least 100. Those 131 berths hold 63% of all visits.</li>
+      <li>Stay length: 10th percentile 7.6 h, median 23.1 h, 90th percentile 72.8 h, 99th percentile 204 h</li>
+      <li>Median stay by type: bulk 54 h, tanker 34 h, general cargo 26 h, container 15 h, cruise 10 h</li>
+      <li>3,400–4,900 visits a month, steady through the year. The Jan–Aug / Sep–Oct / Nov–Dec chronological split has enough data in each part.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="callout warn">
+      <h3>What this dataset cannot do</h3>
+      <ul class="clean">
+        <li><b>Measure anchorage waiting.</b> Calls cover stops near quays only. <code>trajectories.csv</code> has one row per segment between stops with no positions, and <code>areapresence.csv</code> only gives daily sea-zone codes. The simulation must derive the wait from predicted clearance and say so on the data-honesty slide.</li>
+        <li><b>Give distance or speed on approach.</b> There are no positions in transit. The optimizer takes distance from the user, or a rough route length from <code>segments_port2port</code>.</li>
+        <li><b>Describe cargo operations.</b> There is no crane, tonnage or cargo data. Features are limited to port, berth, vessel type, timing and congestion.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Handoffs</div>
+      <h2>What each person should do with this</h2>
+    </div>
+    <div class="team">
+      <div class="role"><span class="tag">ALL</span><p>The label is a commercial berth visit: arrival when speed falls below 0.5 kn inside the berth polygon, departure when it rises above, with gaps under 1 h merged. All times are UTC.</p></div>
+      <div class="role"><span class="tag">BE2</span><p>Build checkpoints from <code>berth_visits_merged_1h.parquet</code>, keeping <code>is_commercial</code> and <code>confidence_min ≥ 0.5</code>. Drop year-censored visits. Test with and without stays over 7 days. Key on <code>berth_key</code>. Try harbour busyness (all-vessel calls in the past 24 h) as a feature.</p></div>
+      <div class="role"><span class="tag">BE3</span><p>With a median stay of 23 h, "clears within 3 h" will be rare early in a visit, so the imbalance experiments are justified. Choose N once BE2's checkpoint distribution exists.</p></div>
+      <div class="role"><span class="tag">BE4</span><p>Model the anchorage wait rather than reading it from history. Give the 138 shared berths a capacity of 2 or more.</p></div>
+      <div class="role"><span class="tag">FE2</span><p>Use the funnel above on the data-honesty slide: 1.49 M calls → 915 k at a berth → 782 k visits → 51.7 k commercial visits, with the reason for each drop.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow">Reproduce</div>
+      <h2>Scripts and outputs</h2>
+    </div>
+    <pre>python3 pipeline/phase1/profile_csvs.py . reports/phase1
+python3 pipeline/phase1/berth_audit.py  . reports/phase1</pre>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File in <code>reports/phase1/</code></th><th>Contents</th></tr></thead>
+        <tbody>
+          <tr><td><code>data_quality.md</code> / <code>.json</code></td><td>Raw profile of all 13 CSVs before any change</td></tr>
+          <tr><td><code>berth_audit.json</code></td><td>Every number on this page</td></tr>
+          <tr><td><code>berth_visits_candidate.parquet</code></td><td>914,989 matched calls, not merged, with all flags</td></tr>
+          <tr><td><code>berth_visits_merged_1h.parquet</code></td><td>781,632 merged visits, all vessel types, with flags and <code>is_commercial</code></td></tr>
+          <tr><td><code>berth_concurrency*.csv</code></td><td>Per-berth sharing, for all vessels and commercial only</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Source: Iphar et al., <i>Port calls and vessel trajectory dataset in the Caribbean with accurate port quays survey</i>, Data in Brief (2024). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11237856/">PMC11237856</a> · Zenodo record 10380638.</span>
+    <span>Both scripts run in about 15 seconds on a laptop.</span>
+  </footer>
+</main>

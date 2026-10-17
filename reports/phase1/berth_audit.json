@@ -1,0 +1,334 @@
+{
+  "rows": 1488781,
+  "timestamps": {
+    "end_before_start": 0,
+    "duration_mismatch_gt_1s": 173,
+    "duration_mismatch_max_s": 36362.0,
+    "zero_duration": 3559,
+    "duration_lt_10min": 114690,
+    "duration_gt_7d": 21861,
+    "duration_gt_30d": 5075,
+    "duration_hours_quantiles": {
+      "0.1": 0.17,
+      "0.25": 0.54,
+      "0.5": 2.52,
+      "0.75": 11.38,
+      "0.9": 29.31,
+      "0.99": 245.93
+    },
+    "starts_on_jan1_first_hour": 1812,
+    "ends_on_dec31_last_hour": 2222,
+    "start_hour_utc_counts": [
+      68717,
+      61062,
+      54018,
+      50741,
+      46422,
+      42755,
+      40402,
+      39738,
+      40313,
+      44884,
+      53073,
+      65013,
+      72944,
+      75066,
+      74257,
+      73947,
+      73901,
+      72715,
+      72649,
+      73083,
+      73774,
+      76264,
+      73313,
+      69730
+    ]
+  },
+  "edge_uncertainty": {
+    "time_bef_missing_pct": 0.83,
+    "time_aft_missing_pct": 60.47,
+    "time_bef_gt_1h_pct": 4.65,
+    "time_aft_gt_1h_pct": 2.8,
+    "time_aft_missing_by_month_pct": {
+      "1": 54.77,
+      "2": 53.98,
+      "3": 55.63,
+      "4": 57.37,
+      "5": 60.02,
+      "6": 61.91,
+      "7": 62.54,
+      "8": 65.04,
+      "9": 65.1,
+      "10": 63.92,
+      "11": 61.5,
+      "12": 61.44
+    }
+  },
+  "conf": {
+    "distribution": {
+      "0": 166162,
+      "(0,0.5]": 98407,
+      "(0.5,0.9]": 65106,
+      "(0.9,0.99]": 287314,
+      "(0.99,1]": 871792
+    },
+    "median_duration_h_by_bin": {
+      "0": 0.17,
+      "(0,0.5]": 13.35,
+      "(0.5,0.9]": 4.52,
+      "(0.9,0.99]": 3.61,
+      "(0.99,1]": 2.54
+    },
+    "nb_mes_zero_by_bin": {
+      "0": 145072,
+      "(0,0.5]": 0,
+      "(0.5,0.9]": 0,
+      "(0.9,0.99]": 0,
+      "(0.99,1]": 0
+    },
+    "coords_missing_pct_by_bin": {
+      "0": 86.06,
+      "(0,0.5]": 33.19,
+      "(0.5,0.9]": 23.39,
+      "(0.9,0.99]": 18.74,
+      "(0.99,1]": 14.11
+    }
+  },
+  "coords": {
+    "missing_pct": 24.7,
+    "missing_when_nb_mes_0_pct": 93.5,
+    "missing_when_nb_mes_gt_0_pct": 17.28
+  },
+  "crs": {
+    "portcalls_srid": [
+      4326
+    ],
+    "berths_srid": [
+      4326
+    ],
+    "ports_srid": [
+      4326
+    ],
+    "portcall_geom_vs_latlon_max_abs_diff_deg": 7.403779903825125e-06,
+    "berth_geom_kinds": {
+      "MultiPolygon": 1902
+    }
+  },
+  "joins": {
+    "portcall_port_not_in_ports": 0,
+    "ports_total": 528,
+    "ports_with_calls": 415,
+    "ports_with_berths": 251,
+    "calls_at_ports_with_berths_pct": 95.83,
+    "duplicate_berth_codes": [
+      "66_20",
+      "76_16",
+      "129_18",
+      "136_07",
+      "323_01",
+      "329_07",
+      "329_15",
+      "335_26",
+      "338_04",
+      "362_03",
+      "384_04"
+    ],
+    "fully_duplicate_berth_rows_excl_id": 1,
+    "berth_portname_mismatch_with_ports": 115
+  },
+  "vessel_type": {
+    "mmsi_in_both_tables": 0,
+    "conflicting_types_in_both": 0,
+    "vessels_with_type_pct": 47.24,
+    "calls_with_type_original_pct": 31.43,
+    "calls_with_type_any_pct": 42.67,
+    "join_row_explosion": 0,
+    "invalid_mmsi_not_9_digits": 3153
+  },
+  "berth_match": {
+    "all_calls": 1488781,
+    "calls_with_coords": 1121003,
+    "calls_with_coords_at_ports_with_berths": 1106862,
+    "matched_calls": 914989,
+    "match_rate_among_candidates_pct": 82.67,
+    "match_rate_among_all_calls_pct": 61.46,
+    "matched_in_more_than_one_berth": 32,
+    "unmatched_within_50m": 78753,
+    "unmatched_within_200m": 150018,
+    "unmatched_beyond_1km_or_no_berth_near": 13957,
+    "match_rate_by_conf_bin_pct": {
+      "0": 67.32,
+      "(0,0.5]": 75.5,
+      "(0.5,0.9]": 71.76,
+      "(0.9,0.99]": 86.3,
+      "(0.99,1]": 83.27
+    },
+    "our_counts_vs_published_number_corr": 0.9942,
+    "our_counts_vs_published_number_ratio_median": 1.0,
+    "berth_area_m2_quantiles": {
+      "0.1": 759,
+      "0.5": 12586,
+      "0.9": 344502,
+      "0.99": 1594840
+    }
+  },
+  "vessel_sequences": {
+    "overlapping_calls_same_vessel": 2750,
+    "overlapping_calls_same_vessel_different_port": 2750,
+    "consecutive_same_port_pairs": 1158086,
+    "same_port_gap_lt_1h": 467121,
+    "same_port_gap_lt_3h": 842065,
+    "same_port_gap_lt_6h": 935927,
+    "same_port_gap_hours_quantiles": {
+      "0.05": 0.52,
+      "0.1": 0.56,
+      "0.25": 0.74,
+      "0.5": 1.24
+    },
+    "same_berth_gap_lt_1h": 133357,
+    "same_port_gap_lt_1h_but_different_berth": 107956
+  },
+  "berth_concurrency": {
+    "berths_analysed": 1662,
+    "max_concurrent_quantiles": {
+      "0.25": 2.0,
+      "0.5": 3.0,
+      "0.75": 5.0,
+      "0.9": 8.0
+    },
+    "berths_never_shared": 280,
+    "berths_shared_gt_10pct_of_occupied_time": 830,
+    "berths_shared_gt_50pct_of_occupied_time": 331,
+    "corr_area_vs_max_concurrent": 0.498,
+    "occupancy_ratio_median": 0.302
+  },
+  "candidate_table": {
+    "rows": 914989,
+    "rows_without_blocking_flags": 852453,
+    "flag_counts": {
+      "flag_zero_duration": 51,
+      "flag_gt_7d": 9286,
+      "flag_low_conf": 61881,
+      "flag_edge_uncertain_gt_1h": 43488,
+      "flag_year_censored": 2692,
+      "flag_overlap_prev": 817,
+      "flag_split_candidate": 304495
+    },
+    "berths_with_ge_100_clean_visits": 889,
+    "berths_with_ge_500_clean_visits": 326,
+    "clean_duration_hours_quantiles": {
+      "0.1": 0.4,
+      "0.25": 1.01,
+      "0.5": 3.5,
+      "0.75": 12.35,
+      "0.9": 27.6
+    },
+    "clean_with_vessel_type_pct": 41.36,
+    "clean_by_month": {
+      "1": 57011,
+      "2": 51519,
+      "3": 64021,
+      "4": 64802,
+      "5": 66521,
+      "6": 72061,
+      "7": 82351,
+      "8": 84200,
+      "9": 74349,
+      "10": 80144,
+      "11": 77269,
+      "12": 78205
+    }
+  },
+  "same_berth_gap_hours_quantiles": {
+    "0.1": 0.55,
+    "0.25": 0.7,
+    "0.5": 1.19,
+    "0.75": 3.46,
+    "0.9": 20.0
+  },
+  "merge_simulation": {
+    "0.5": {
+      "visits": 914989,
+      "commercial_visits": 65533,
+      "median_duration_h_all": 3.85,
+      "median_duration_h_commercial": 21.22,
+      "commercial_visits_multi_call_pct": 0.0
+    },
+    "1": {
+      "visits": 781632,
+      "commercial_visits": 62530,
+      "median_duration_h_all": 4.9,
+      "median_duration_h_commercial": 22.49,
+      "commercial_visits_multi_call_pct": 3.47
+    },
+    "2": {
+      "visits": 708823,
+      "commercial_visits": 61520,
+      "median_duration_h_all": 5.72,
+      "median_duration_h_commercial": 22.88,
+      "commercial_visits_multi_call_pct": 4.1
+    },
+    "3": {
+      "visits": 686089,
+      "commercial_visits": 61273,
+      "median_duration_h_all": 6.0,
+      "median_duration_h_commercial": 22.99,
+      "commercial_visits_multi_call_pct": 4.26
+    }
+  },
+  "commercial_subset": {
+    "visits": 51747,
+    "vessels": 6218,
+    "by_type": {
+      "tank": 19165,
+      "cont": 16651,
+      "bulk": 5924,
+      "gcar": 5355,
+      "crui": 4652
+    },
+    "ports": 159,
+    "berths": 832,
+    "berths_with_ge_50_visits": 263,
+    "berths_with_ge_100_visits": 131,
+    "share_of_visits_at_berths_ge_100_pct": 63.13,
+    "duration_hours_quantiles": {
+      "0.1": 7.61,
+      "0.25": 11.77,
+      "0.5": 23.09,
+      "0.75": 43.29,
+      "0.9": 72.78,
+      "0.99": 204.3
+    },
+    "median_duration_h_by_type": {
+      "bulk": 54.05,
+      "cont": 15.31,
+      "crui": 9.9,
+      "gcar": 25.69,
+      "tank": 34.3
+    },
+    "visits_by_month": {
+      "1": 3906,
+      "2": 3448,
+      "3": 4211,
+      "4": 4055,
+      "5": 4055,
+      "6": 4114,
+      "7": 4684,
+      "8": 4688,
+      "9": 4353,
+      "10": 4665,
+      "11": 4709,
+      "12": 4859
+    },
+    "concurrency_berths_analysed": 688,
+    "concurrency_never_shared": 395,
+    "concurrency_shared_gt_10pct_time": 138,
+    "concurrency_max_quantiles": {
+      "0.25": 1.0,
+      "0.5": 1.0,
+      "0.75": 2.0,
+      "0.9": 3.0
+    }
+  }
+}

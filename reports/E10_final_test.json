@@ -1,0 +1,147 @@
+{
+  "test_rows": 39164,
+  "regression": {
+    "model": {
+      "mae": 14.84012206720836,
+      "rmse": 32.75479819735425,
+      "medae": 6.851512741512722
+    },
+    "baseline_global": {
+      "mae": 21.76462355593005,
+      "rmse": 40.636281778490535,
+      "medae": 12.964027777777778
+    },
+    "baseline_port": {
+      "mae": 18.667537683416743,
+      "rmse": 37.883010467810635,
+      "medae": 9.851180555555555
+    },
+    "baseline_berth": {
+      "mae": 16.555400399601673,
+      "rmse": 35.163133707555154,
+      "medae": 7.834722222222222
+    },
+    "test_without_gt_7d_stays": {
+      "mae": 12.389435805823108,
+      "rmse": 20.39644727850333,
+      "medae": 6.690244511498346
+    }
+  },
+  "biggest_misses": {
+    "share_of_top50_with_gt_7d_stay": 1.0,
+    "median_true_remaining_h_top50": 428.11847222222224,
+    "share_of_top50_merged_from_multiple_calls": 0.34
+  },
+  "unseen_ports": {
+    "held_out_ports": 31,
+    "rows": 4191,
+    "model": {
+      "mae": 18.72402890476176,
+      "rmse": 25.61696917127037,
+      "medae": 15.1836976369222
+    },
+    "berth_baseline_fallback": {
+      "mae": 15.776283769453062,
+      "rmse": 26.07024577542305,
+      "medae": 9.010277777777777
+    }
+  },
+  "classification": {
+    "calibrated_at_threshold": {
+      "precision": 0.5394701632325395,
+      "recall": 0.6992715920915713,
+      "f1": 0.6090634441087613,
+      "pr_auc": 0.6405755685012133,
+      "brier": 0.0788557506511104,
+      "ece": 0.00707953561654993,
+      "threshold": 0.29,
+      "tn": 29956,
+      "fp": 3442,
+      "fn": 1734,
+      "tp": 4032
+    },
+    "raw_at_0.5": {
+      "precision": 0.5076394646452683,
+      "recall": 0.7433229275060701,
+      "f1": 0.6032796115138293,
+      "pr_auc": 0.657549817450975,
+      "brier": 0.10583361930953349,
+      "ece": 0.13605320442826815,
+      "threshold": 0.5,
+      "tn": 29241,
+      "fp": 4157,
+      "fn": 1480,
+      "tp": 4286
+    },
+    "positive_rate": 0.14722704524563374,
+    "model": "RandomForestClassifier | class_weight"
+  },
+  "quantile": {
+    "coverage_p25": 0.2365692983352058,
+    "pinball_p25": 4.899000289308719,
+    "coverage_p50": 0.47944540904912675,
+    "pinball_p50": 7.412628450720083,
+    "coverage_p90": 0.8942396078030844,
+    "pinball_p90": 5.527432224114445,
+    "interval_p25_p90_coverage": 0.6576703094678786,
+    "interval_median_width_h": 30.950413666173137,
+    "coverage": 0.8942396078030844
+  },
+  "quantile_by_type": {
+    "tank": {
+      "coverage_p25": 0.2438156037075686,
+      "pinball_p25": 5.229159128414735,
+      "coverage_p50": 0.48505309680191516,
+      "pinball_p50": 7.732915903424785,
+      "coverage_p90": 0.8998219876005156,
+      "pinball_p90": 5.572688455187909,
+      "interval_p25_p90_coverage": 0.6560063838929471,
+      "interval_median_width_h": 37.41830764118569,
+      "coverage": 0.8998219876005156
+    },
+    "bulk": {
+      "coverage_p25": 0.21225710014947682,
+      "pinball_p25": 10.437889106047383,
+      "coverage_p50": 0.41341020713218024,
+      "pinball_p50": 16.184829284721946,
+      "coverage_p90": 0.8445440956651719,
+      "pinball_p90": 13.106048028030395,
+      "interval_p25_p90_coverage": 0.6322869955156951,
+      "interval_median_width_h": 61.050129100744954,
+      "coverage": 0.8445440956651719
+    },
+    "cont": {
+      "coverage_p25": 0.2315740308267165,
+      "pinball_p25": 2.117293607221926,
+      "coverage_p50": 0.4847267631947688,
+      "pinball_p50": 3.1392310534314913,
+      "coverage_p90": 0.9043437645959832,
+      "pinball_p90": 2.237905444665433,
+      "interval_p25_p90_coverage": 0.6727697337692667,
+      "interval_median_width_h": 14.9940002802824,
+      "coverage": 0.9043437645959832
+    },
+    "gcar": {
+      "coverage_p25": 0.3018410852713178,
+      "pinball_p25": 7.362411919796413,
+      "coverage_p50": 0.5140503875968992,
+      "pinball_p50": 11.478370749609532,
+      "coverage_p90": 0.8653100775193798,
+      "pinball_p90": 8.391563146972876,
+      "interval_p25_p90_coverage": 0.563468992248062,
+      "interval_median_width_h": 50.046030754972634,
+      "coverage": 0.8653100775193798
+    },
+    "crui": {
+      "coverage_p25": 0.17098599940422995,
+      "pinball_p25": 1.4113544282490311,
+      "coverage_p50": 0.48495680667262436,
+      "pinball_p50": 2.2488856835218893,
+      "coverage_p90": 0.9398272266904975,
+      "pinball_p90": 1.7035789784444582,
+      "interval_p25_p90_coverage": 0.7688412272862675,
+      "interval_median_width_h": 4.501988488471531,
+      "coverage": 0.9398272266904975
+    }
+  }
+}

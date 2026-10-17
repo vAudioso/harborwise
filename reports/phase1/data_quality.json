@@ -1,0 +1,2278 @@
+[
+  {
+    "file": "areapresence.csv",
+    "rows": 35652,
+    "columns": 367,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 35652
+      },
+      "mmsi": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 35652
+      }
+    },
+    "daily_columns": {
+      "count": 365,
+      "missing_pct": 76.37,
+      "top_codes": {
+        "f": 1566412,
+        "g": 621996,
+        "e": 344026,
+        "d": 328984,
+        "ag": 37851,
+        "a": 34126,
+        "de": 23157,
+        "ef": 19160,
+        "ce": 18983,
+        "dg": 18806,
+        "fg": 17645,
+        "eg": 13240,
+        "c": 10645,
+        "b": 8876,
+        "bg": 6731
+      }
+    }
+  },
+  {
+    "file": "berths.csv",
+    "rows": 1902,
+    "columns": 8,
+    "exact_duplicate_rows_excl_id": 1,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 1902
+      },
+      "portname": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 247,
+        "top_values": {
+          "New Orleans": 99,
+          "Port Everglades": 50,
+          "Port of South Louisiana": 48,
+          "Willemstad": 45,
+          "Mobile": 44,
+          "Cartagena": 43,
+          "Houston": 43,
+          "Cristobal": 39,
+          "Chaguaramas": 38,
+          "Ciudad del Carmen": 36
+        }
+      },
+      "portid": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 251
+      },
+      "countrycode": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 39,
+        "top_values": {
+          "USA": 686,
+          "MEX": 233,
+          "COL": 130,
+          "TTO": 110,
+          "VEN": 99,
+          "PAN": 74,
+          "DOM": 55,
+          "PRI": 53,
+          "BHS": 50,
+          "CUW": 48
+        }
+      },
+      "berth": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 1891,
+        "top_values": {
+          "66_20": 2,
+          "76_16": 2,
+          "129_18": 2,
+          "136_07": 2,
+          "323_01": 2,
+          "329_07": 2,
+          "329_15": 2,
+          "335_26": 2,
+          "338_04": 2,
+          "362_03": 2
+        }
+      },
+      "number": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 741,
+        "stats": {
+          "count": 1902.0,
+          "mean": 499.2645,
+          "std": 1490.4004,
+          "min": 0.0,
+          "1%": 9.0,
+          "25%": 48.0,
+          "50%": 119.0,
+          "75%": 369.0,
+          "99%": 6182.46,
+          "max": 33888.0
+        },
+        "n_zero": 5,
+        "n_negative": 0
+      },
+      "inport": {
+        "dtype": "float64",
+        "missing_pct": 0.0,
+        "n_unique": 1829,
+        "stats": {
+          "count": 1902.0,
+          "mean": 0.0654,
+          "std": 0.1155,
+          "min": 0.0,
+          "1%": 0.0007,
+          "25%": 0.0069,
+          "50%": 0.0213,
+          "75%": 0.064,
+          "99%": 0.5971,
+          "max": 0.9028
+        },
+        "n_zero": 5,
+        "n_negative": 0
+      },
+      "geom": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 1901,
+        "ewkb_type_prefixes": {
+          "0106000020E6100000": 1902
+        }
+      }
+    }
+  },
+  {
+    "file": "port_traffic.csv",
+    "rows": 528,
+    "columns": 43,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 528
+      },
+      "portname": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 516,
+        "top_values": {
+          "Georgetown": 3,
+          "Oranjestad": 2,
+          "Charlestown": 2,
+          "St George s": 2,
+          "La Ceiba": 2,
+          "Santa Marta": 2,
+          "Puerto Brisa": 2,
+          "Matanzas": 2,
+          "Manzanillo": 2,
+          "Port Royal": 2
+        }
+      },
+      "country": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 41,
+        "top_values": {
+          "Cuba": 68,
+          "United States of America": 67,
+          "Venezuela": 65,
+          "Colombia": 29,
+          "Panama": 23,
+          "Haiti": 23,
+          "Mexico": 21,
+          "Dominican Republic": 21,
+          "Puerto Rico": 20,
+          "Nicaragua": 14
+        }
+      },
+      "pc_total": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 316,
+        "stats": {
+          "count": 528.0,
+          "mean": 2819.661,
+          "std": 13690.3795,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 2.0,
+          "50%": 130.5,
+          "75%": 1095.5,
+          "99%": 33451.6,
+          "max": 221754.0
+        },
+        "n_zero": 113,
+        "n_negative": 0
+      },
+      "pc_bulk": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 75,
+        "stats": {
+          "count": 528.0,
+          "mean": 21.8182,
+          "std": 114.1506,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 2.0,
+          "99%": 384.22,
+          "max": 2118.0
+        },
+        "n_zero": 380,
+        "n_negative": 0
+      },
+      "pc_cont": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 80,
+        "stats": {
+          "count": 528.0,
+          "mean": 61.75,
+          "std": 272.1509,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 1609.17,
+          "max": 3014.0
+        },
+        "n_zero": 433,
+        "n_negative": 0
+      },
+      "pc_crui": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 85,
+        "stats": {
+          "count": 528.0,
+          "mean": 35.5379,
+          "std": 156.8586,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.25,
+          "99%": 753.88,
+          "max": 2246.0
+        },
+        "n_zero": 396,
+        "n_negative": 0
+      },
+      "pc_gcar": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 106,
+        "stats": {
+          "count": 528.0,
+          "mean": 26.5114,
+          "std": 74.6221,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 14.25,
+          "99%": 410.49,
+          "max": 773.0
+        },
+        "n_zero": 320,
+        "n_negative": 0
+      },
+      "pc_iisl": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 93,
+        "stats": {
+          "count": 528.0,
+          "mean": 171.3523,
+          "std": 1001.2168,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 3075.09,
+          "max": 15727.0
+        },
+        "n_zero": 387,
+        "n_negative": 0
+      },
+      "pc_serv": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 195,
+        "stats": {
+          "count": 528.0,
+          "mean": 819.7027,
+          "std": 3255.3993,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 2.0,
+          "75%": 110.0,
+          "99%": 14858.51,
+          "max": 39243.0
+        },
+        "n_zero": 241,
+        "n_negative": 0
+      },
+      "pc_tank": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 112,
+        "stats": {
+          "count": 528.0,
+          "mean": 66.5398,
+          "std": 331.8746,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 10.0,
+          "99%": 878.05,
+          "max": 6502.0
+        },
+        "n_zero": 342,
+        "n_negative": 0
+      },
+      "uv_total": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 195,
+        "stats": {
+          "count": 528.0,
+          "mean": 136.6439,
+          "std": 366.079,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 1.0,
+          "50%": 17.0,
+          "75%": 93.0,
+          "99%": 1391.64,
+          "max": 4096.0
+        },
+        "n_zero": 113,
+        "n_negative": 0
+      },
+      "uv_bulk": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 65,
+        "stats": {
+          "count": 528.0,
+          "mean": 12.2216,
+          "std": 57.3533,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 240.14,
+          "max": 909.0
+        },
+        "n_zero": 380,
+        "n_negative": 0
+      },
+      "uv_cont": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 52,
+        "stats": {
+          "count": 528.0,
+          "mean": 8.1136,
+          "std": 37.1709,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 163.11,
+          "max": 421.0
+        },
+        "n_zero": 433,
+        "n_negative": 0
+      },
+      "uv_crui": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 51,
+        "stats": {
+          "count": 528.0,
+          "mean": 5.3011,
+          "std": 17.9525,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.25,
+          "99%": 79.65,
+          "max": 244.0
+        },
+        "n_zero": 396,
+        "n_negative": 0
+      },
+      "uv_gcar": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 59,
+        "stats": {
+          "count": 528.0,
+          "mean": 7.6004,
+          "std": 22.8722,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 4.0,
+          "99%": 87.73,
+          "max": 303.0
+        },
+        "n_zero": 320,
+        "n_negative": 0
+      },
+      "uv_iisl": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 24,
+        "stats": {
+          "count": 528.0,
+          "mean": 2.0436,
+          "std": 9.4494,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 20.46,
+          "max": 174.0
+        },
+        "n_zero": 387,
+        "n_negative": 0
+      },
+      "uv_serv": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 71,
+        "stats": {
+          "count": 528.0,
+          "mean": 14.3049,
+          "std": 49.9401,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 1.0,
+          "75%": 7.0,
+          "99%": 215.36,
+          "max": 668.0
+        },
+        "n_zero": 241,
+        "n_negative": 0
+      },
+      "uv_tank": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 82,
+        "stats": {
+          "count": 528.0,
+          "mean": 21.9905,
+          "std": 93.76,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 3.0,
+          "99%": 383.17,
+          "max": 1477.0
+        },
+        "n_zero": 342,
+        "n_negative": 0
+      },
+      "vk_total": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 146,
+        "stats": {
+          "count": 528.0,
+          "mean": 69.0152,
+          "std": 204.1369,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 5.0,
+          "75%": 36.25,
+          "99%": 787.01,
+          "max": 2647.0
+        },
+        "n_zero": 172,
+        "n_negative": 0
+      },
+      "vk_bulk": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 65,
+        "stats": {
+          "count": 528.0,
+          "mean": 12.2008,
+          "std": 57.3048,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 240.14,
+          "max": 909.0
+        },
+        "n_zero": 380,
+        "n_negative": 0
+      },
+      "vk_cont": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 51,
+        "stats": {
+          "count": 528.0,
+          "mean": 8.0284,
+          "std": 37.0371,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 162.11,
+          "max": 421.0
+        },
+        "n_zero": 435,
+        "n_negative": 0
+      },
+      "vk_crui": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 45,
+        "stats": {
+          "count": 528.0,
+          "mean": 3.8996,
+          "std": 13.3624,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 70.0,
+          "max": 97.0
+        },
+        "n_zero": 430,
+        "n_negative": 0
+      },
+      "vk_gcar": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 57,
+        "stats": {
+          "count": 528.0,
+          "mean": 7.5587,
+          "std": 22.8526,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 4.0,
+          "99%": 87.73,
+          "max": 303.0
+        },
+        "n_zero": 321,
+        "n_negative": 0
+      },
+      "vk_iisl": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 10,
+        "stats": {
+          "count": 528.0,
+          "mean": 0.5814,
+          "std": 1.5093,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 7.0,
+          "max": 13.0
+        },
+        "n_zero": 414,
+        "n_negative": 0
+      },
+      "vk_serv": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 59,
+        "stats": {
+          "count": 528.0,
+          "mean": 8.5133,
+          "std": 24.525,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 1.0,
+          "75%": 5.25,
+          "99%": 126.03,
+          "max": 298.0
+        },
+        "n_zero": 263,
+        "n_negative": 0
+      },
+      "vk_tank": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 82,
+        "stats": {
+          "count": 528.0,
+          "mean": 21.8807,
+          "std": 93.743,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 3.0,
+          "99%": 383.17,
+          "max": 1477.0
+        },
+        "n_zero": 346,
+        "n_negative": 0
+      },
+      "tt_total": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 356,
+        "stats": {
+          "count": 528.0,
+          "mean": 8468318.5341,
+          "std": 27098519.0448,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 60168.0,
+          "75%": 1979055.75,
+          "99%": 149529322.41,
+          "max": 309117493.0
+        },
+        "n_zero": 172,
+        "n_negative": 0
+      },
+      "tt_bulk": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 146,
+        "stats": {
+          "count": 528.0,
+          "mean": 638661.9337,
+          "std": 3657062.3772,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 19390.75,
+          "99%": 12864959.62,
+          "max": 66751879.0
+        },
+        "n_zero": 380,
+        "n_negative": 0
+      },
+      "tt_cont": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 93,
+        "stats": {
+          "count": 528.0,
+          "mean": 2072983.5758,
+          "std": 12389517.2902,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 46007755.96,
+          "max": 176627134.0
+        },
+        "n_zero": 435,
+        "n_negative": 0
+      },
+      "tt_crui": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 96,
+        "stats": {
+          "count": 528.0,
+          "mean": 2620649.0625,
+          "std": 12077009.7286,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 58329643.37,
+          "max": 146213726.0
+        },
+        "n_zero": 430,
+        "n_negative": 0
+      },
+      "tt_gcar": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 204,
+        "stats": {
+          "count": 528.0,
+          "mean": 187739.0189,
+          "std": 690985.5968,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 76916.5,
+          "99%": 2369556.04,
+          "max": 9837646.0
+        },
+        "n_zero": 321,
+        "n_negative": 0
+      },
+      "tt_iisl": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 114,
+        "stats": {
+          "count": 528.0,
+          "mean": 120846.3144,
+          "std": 967957.6248,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 2686210.05,
+          "max": 19307148.0
+        },
+        "n_zero": 414,
+        "n_negative": 0
+      },
+      "tt_serv": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 261,
+        "stats": {
+          "count": 528.0,
+          "mean": 341756.6098,
+          "std": 1791971.6367,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 125.0,
+          "75%": 35230.0,
+          "99%": 5562895.2,
+          "max": 33799158.0
+        },
+        "n_zero": 263,
+        "n_negative": 0
+      },
+      "tt_tank": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 180,
+        "stats": {
+          "count": 528.0,
+          "mean": 1981971.8466,
+          "std": 11149950.7195,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 72800.0,
+          "99%": 36439352.69,
+          "max": 200399106.0
+        },
+        "n_zero": 346,
+        "n_negative": 0
+      },
+      "ma_total": {
+        "dtype": "float64",
+        "missing_pct": 32.576,
+        "n_unique": 56,
+        "stats": {
+          "count": 356.0,
+          "mean": 18.7079,
+          "std": 12.914,
+          "min": 1.0,
+          "1%": 3.0,
+          "25%": 11.0,
+          "50%": 13.0,
+          "75%": 22.0,
+          "99%": 58.8,
+          "max": 73.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_bulk": {
+        "dtype": "float64",
+        "missing_pct": 71.97,
+        "n_unique": 23,
+        "stats": {
+          "count": 148.0,
+          "mean": 10.4392,
+          "std": 8.7949,
+          "min": 2.0,
+          "1%": 2.0,
+          "25%": 7.0,
+          "50%": 8.0,
+          "75%": 9.0,
+          "99%": 50.0,
+          "max": 50.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_cont": {
+        "dtype": "float64",
+        "missing_pct": 82.386,
+        "n_unique": 17,
+        "stats": {
+          "count": 93.0,
+          "mean": 13.9677,
+          "std": 6.9258,
+          "min": 2.0,
+          "1%": 2.0,
+          "25%": 12.0,
+          "50%": 13.0,
+          "75%": 14.0,
+          "99%": 40.72,
+          "max": 49.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_crui": {
+        "dtype": "float64",
+        "missing_pct": 81.439,
+        "n_unique": 26,
+        "stats": {
+          "count": 98.0,
+          "mean": 19.9388,
+          "std": 11.0936,
+          "min": 1.0,
+          "1%": 1.97,
+          "25%": 14.0,
+          "50%": 17.5,
+          "75%": 22.0,
+          "99%": 60.0,
+          "max": 60.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_gcar": {
+        "dtype": "float64",
+        "missing_pct": 60.795,
+        "n_unique": 44,
+        "stats": {
+          "count": 207.0,
+          "mean": 17.9565,
+          "std": 12.4426,
+          "min": 1.0,
+          "1%": 6.06,
+          "25%": 10.0,
+          "50%": 12.0,
+          "75%": 20.0,
+          "99%": 62.0,
+          "max": 73.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_iisl": {
+        "dtype": "float64",
+        "missing_pct": 78.409,
+        "n_unique": 36,
+        "stats": {
+          "count": 114.0,
+          "mean": 23.3947,
+          "std": 14.5503,
+          "min": 1.0,
+          "1%": 1.0,
+          "25%": 12.25,
+          "50%": 19.0,
+          "75%": 34.75,
+          "99%": 51.0,
+          "max": 71.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_serv": {
+        "dtype": "float64",
+        "missing_pct": 49.811,
+        "n_unique": 55,
+        "stats": {
+          "count": 265.0,
+          "mean": 24.434,
+          "std": 15.3476,
+          "min": 1.0,
+          "1%": 2.64,
+          "25%": 12.0,
+          "50%": 20.0,
+          "75%": 39.0,
+          "99%": 56.0,
+          "max": 68.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "ma_tank": {
+        "dtype": "float64",
+        "missing_pct": 65.53,
+        "n_unique": 21,
+        "stats": {
+          "count": 182.0,
+          "mean": 11.8187,
+          "std": 5.228,
+          "min": 3.0,
+          "1%": 3.0,
+          "25%": 10.0,
+          "50%": 12.0,
+          "75%": 13.0,
+          "99%": 30.47,
+          "max": 51.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      }
+    }
+  },
+  {
+    "file": "portcalls.csv",
+    "rows": 1488781,
+    "columns": 13,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 1488781
+      },
+      "mmsi": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 22225
+      },
+      "port": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 415
+      },
+      "ts_start": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 1448638,
+        "unparseable": 0,
+        "min": "2019-01-01 00:00:01",
+        "max": "2019-12-31 23:59:53"
+      },
+      "ts_end": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 1447324,
+        "unparseable": 0,
+        "min": "2019-01-01 00:00:51",
+        "max": "2019-12-31 23:59:59"
+      },
+      "nb_mes": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 6488,
+        "stats": {
+          "count": 1488781.0,
+          "mean": 121.5889,
+          "std": 785.5459,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 3.0,
+          "50%": 16.0,
+          "75%": 77.0,
+          "99%": 1498.0,
+          "max": 228461.0
+        },
+        "n_zero": 145072,
+        "n_negative": 0
+      },
+      "time_bef": {
+        "dtype": "float64",
+        "missing_pct": 0.825,
+        "n_unique": 32864,
+        "stats": {
+          "count": 1476492.0,
+          "mean": 1353.6395,
+          "std": 5453.5476,
+          "min": 1.0,
+          "1%": 14.0,
+          "25%": 200.0,
+          "50%": 530.0,
+          "75%": 669.0,
+          "99%": 28082.0,
+          "max": 86400.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "time_aft": {
+        "dtype": "float64",
+        "missing_pct": 60.471,
+        "n_unique": 24244,
+        "stats": {
+          "count": 588504.0,
+          "mean": 1753.7969,
+          "std": 6330.0688,
+          "min": 1.0,
+          "1%": 13.0,
+          "25%": 181.0,
+          "50%": 540.0,
+          "75%": 849.0,
+          "99%": 34859.97,
+          "max": 86324.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "duration": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 210336,
+        "stats": {
+          "count": 1488781.0,
+          "mean": 72820.8271,
+          "std": 550737.1193,
+          "min": 0.0,
+          "1%": 29.0,
+          "25%": 1960.0,
+          "50%": 9059.0,
+          "75%": 40969.0,
+          "99%": 885353.2,
+          "max": 31535658.0
+        },
+        "n_zero": 3559,
+        "n_negative": 0
+      },
+      "conf": {
+        "dtype": "float64",
+        "missing_pct": 0.0,
+        "n_unique": 340242,
+        "stats": {
+          "count": 1488781.0,
+          "mean": 0.8175,
+          "std": 0.353,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.9662,
+          "50%": 0.9913,
+          "75%": 0.9967,
+          "99%": 1.0,
+          "max": 1.0
+        },
+        "n_zero": 166162,
+        "n_negative": 0
+      },
+      "latitude": {
+        "dtype": "float64",
+        "missing_pct": 24.703,
+        "n_unique": 309213,
+        "stats": {
+          "count": 1121003.0,
+          "mean": 25.6713,
+          "std": 6.7376,
+          "min": 4.8483,
+          "1%": 9.3523,
+          "25%": 20.4785,
+          "50%": 29.6204,
+          "75%": 29.9342,
+          "99%": 32.8492,
+          "max": 34.0234
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "longitude": {
+        "dtype": "float64",
+        "missing_pct": 24.703,
+        "n_unique": 201230,
+        "stats": {
+          "count": 1121003.0,
+          "mean": -86.4699,
+          "std": 10.9788,
+          "min": -97.9217,
+          "1%": -97.823,
+          "25%": -94.995,
+          "50%": -90.3143,
+          "75%": -80.1673,
+          "99%": -60.8742,
+          "max": -52.2649
+        },
+        "n_zero": 0,
+        "n_negative": 1121003
+      },
+      "geom": {
+        "dtype": "str",
+        "missing_pct": 24.703,
+        "n_unique": 733132,
+        "ewkb_type_prefixes": {
+          "0101000020E6100000": 1121003
+        }
+      }
+    }
+  },
+  {
+    "file": "ports.csv",
+    "rows": 528,
+    "columns": 9,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 528
+      },
+      "portname": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 516,
+        "top_values": {
+          "Georgetown": 3,
+          "Oranjestad": 2,
+          "Charlestown": 2,
+          "St George s": 2,
+          "La Ceiba": 2,
+          "Santa Marta": 2,
+          "Puerto Brisa": 2,
+          "Matanzas": 2,
+          "Manzanillo": 2,
+          "Port Royal": 2
+        }
+      },
+      "countryname": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 41,
+        "top_values": {
+          "Cuba": 68,
+          "United States of America": 67,
+          "Venezuela": 65,
+          "Colombia": 29,
+          "Panama": 23,
+          "Haiti": 23,
+          "Mexico": 21,
+          "Dominican Republic": 21,
+          "Puerto Rico": 20,
+          "Nicaragua": 14
+        }
+      },
+      "countrycode": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 41,
+        "top_values": {
+          "CUB": 68,
+          "USA": 67,
+          "VEN": 65,
+          "COL": 29,
+          "PAN": 23,
+          "HTI": 23,
+          "MEX": 21,
+          "DOM": 21,
+          "PRI": 20,
+          "NIC": 14
+        }
+      },
+      "quay": {
+        "dtype": "float64",
+        "missing_pct": 47.159,
+        "n_unique": 259,
+        "stats": {
+          "count": 279.0,
+          "mean": 2566.9498,
+          "std": 5575.1901,
+          "min": 13.0,
+          "1%": 19.78,
+          "25%": 213.0,
+          "50%": 682.0,
+          "75%": 2439.5,
+          "99%": 24188.68,
+          "max": 59384.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "wharf": {
+        "dtype": "float64",
+        "missing_pct": 17.992,
+        "n_unique": 337,
+        "stats": {
+          "count": 433.0,
+          "mean": 1176.3072,
+          "std": 4582.7274,
+          "min": 10.0,
+          "1%": 15.32,
+          "25%": 89.0,
+          "50%": 254.0,
+          "75%": 736.0,
+          "99%": 10231.12,
+          "max": 79468.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "offshore": {
+        "dtype": "float64",
+        "missing_pct": 99.242,
+        "n_unique": 4,
+        "stats": {
+          "count": 4.0,
+          "mean": 405.75,
+          "std": 317.0409,
+          "min": 101.0,
+          "1%": 105.35,
+          "25%": 209.75,
+          "50%": 345.0,
+          "75%": 541.0,
+          "99%": 820.36,
+          "max": 832.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "geom": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 528,
+        "ewkb_type_prefixes": {
+          "0105000020E6100000": 528
+        }
+      },
+      "locode": {
+        "dtype": "str",
+        "missing_pct": 85.795,
+        "n_unique": 74
+      }
+    }
+  },
+  {
+    "file": "segments_port2port.csv",
+    "rows": 9969,
+    "columns": 12,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 9969
+      },
+      "port_origin": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 399
+      },
+      "port_destination": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 403
+      },
+      "number_all": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 379,
+        "stats": {
+          "count": 9969.0,
+          "mean": 29.9733,
+          "std": 185.0015,
+          "min": 1.0,
+          "1%": 1.0,
+          "25%": 1.0,
+          "50%": 3.0,
+          "75%": 9.0,
+          "99%": 516.32,
+          "max": 5037.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "number_bulk": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 41,
+        "stats": {
+          "count": 9969.0,
+          "mean": 0.492,
+          "std": 3.1968,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 11.0,
+          "max": 148.0
+        },
+        "n_zero": 8695,
+        "n_negative": 0
+      },
+      "number_cont": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 118,
+        "stats": {
+          "count": 9969.0,
+          "mean": 2.1171,
+          "std": 15.2376,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 51.0,
+          "max": 493.0
+        },
+        "n_zero": 9086,
+        "n_negative": 0
+      },
+      "number_crui": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 88,
+        "stats": {
+          "count": 9969.0,
+          "mean": 1.3563,
+          "std": 9.4952,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 33.0,
+          "max": 272.0
+        },
+        "n_zero": 8654,
+        "n_negative": 0
+      },
+      "number_gcar": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 58,
+        "stats": {
+          "count": 9969.0,
+          "mean": 0.8585,
+          "std": 4.8971,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 17.0,
+          "max": 202.0
+        },
+        "n_zero": 7961,
+        "n_negative": 0
+      },
+      "number_iisl": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 104,
+        "stats": {
+          "count": 9969.0,
+          "mean": 5.3791,
+          "std": 108.7491,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 31.32,
+          "max": 5037.0
+        },
+        "n_zero": 9355,
+        "n_negative": 0
+      },
+      "number_serv": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 156,
+        "stats": {
+          "count": 9969.0,
+          "mean": 4.6962,
+          "std": 49.6899,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 79.32,
+          "max": 1837.0
+        },
+        "n_zero": 7767,
+        "n_negative": 0
+      },
+      "number_tank": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 87,
+        "stats": {
+          "count": 9969.0,
+          "mean": 1.8049,
+          "std": 9.2841,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 35.32,
+          "max": 280.0
+        },
+        "n_zero": 7421,
+        "n_negative": 0
+      },
+      "geom": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 9969,
+        "ewkb_type_prefixes": {
+          "0102000020E6100000": 9969
+        }
+      }
+    }
+  },
+  {
+    "file": "segments_port2territory.csv",
+    "rows": 7425,
+    "columns": 13,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 7425
+      },
+      "port": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 359
+      },
+      "country": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 41,
+        "top_values": {
+          "USA": 487,
+          "COL": 338,
+          "DOM": 336,
+          "PRI": 312,
+          "TTO": 303,
+          "MEX": 299,
+          "VIR": 270,
+          "JAM": 262,
+          "BHS": 256,
+          "CUW": 238
+        }
+      },
+      "direction": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 2,
+        "stats": {
+          "count": 7425.0,
+          "mean": 0.4986,
+          "std": 0.5,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 1.0,
+          "max": 1.0
+        },
+        "n_zero": 3723,
+        "n_negative": 0
+      },
+      "number_all": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 523,
+        "stats": {
+          "count": 7425.0,
+          "mean": 80.4399,
+          "std": 511.5518,
+          "min": 1.0,
+          "1%": 1.0,
+          "25%": 1.0,
+          "50%": 4.0,
+          "75%": 20.0,
+          "99%": 1689.64,
+          "max": 13792.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "number_bulk": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 76,
+        "stats": {
+          "count": 7425.0,
+          "mean": 1.3207,
+          "std": 10.027,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 26.0,
+          "max": 327.0
+        },
+        "n_zero": 6247,
+        "n_negative": 0
+      },
+      "number_cont": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 171,
+        "stats": {
+          "count": 7425.0,
+          "mean": 5.6848,
+          "std": 31.739,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 120.0,
+          "max": 893.0
+        },
+        "n_zero": 6198,
+        "n_negative": 0
+      },
+      "number_crui": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 124,
+        "stats": {
+          "count": 7425.0,
+          "mean": 3.642,
+          "std": 22.9486,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 75.0,
+          "max": 886.0
+        },
+        "n_zero": 5667,
+        "n_negative": 0
+      },
+      "number_gcar": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 89,
+        "stats": {
+          "count": 7425.0,
+          "mean": 2.2985,
+          "std": 10.1323,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 43.0,
+          "max": 228.0
+        },
+        "n_zero": 5160,
+        "n_negative": 0
+      },
+      "number_iisl": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 145,
+        "stats": {
+          "count": 7425.0,
+          "mean": 14.4442,
+          "std": 201.0082,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 174.52,
+          "max": 7861.0
+        },
+        "n_zero": 6679,
+        "n_negative": 0
+      },
+      "number_serv": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 192,
+        "stats": {
+          "count": 7425.0,
+          "mean": 12.6047,
+          "std": 117.7126,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 0.0,
+          "99%": 310.28,
+          "max": 3066.0
+        },
+        "n_zero": 5807,
+        "n_negative": 0
+      },
+      "number_tank": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 140,
+        "stats": {
+          "count": 7425.0,
+          "mean": 4.8436,
+          "std": 34.7075,
+          "min": 0.0,
+          "1%": 0.0,
+          "25%": 0.0,
+          "50%": 0.0,
+          "75%": 1.0,
+          "99%": 94.0,
+          "max": 1386.0
+        },
+        "n_zero": 5053,
+        "n_negative": 0
+      },
+      "geom": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 7425,
+        "ewkb_type_prefixes": {
+          "0102000020E6100000": 7425
+        }
+      }
+    }
+  },
+  {
+    "file": "trajectories.csv",
+    "rows": 1473752,
+    "columns": 7,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 1473752
+      },
+      "idtraj": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 83
+      },
+      "rankintraj": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 4374,
+        "stats": {
+          "count": 1473752.0,
+          "mean": 362.7783,
+          "std": 483.4118,
+          "min": 1.0,
+          "1%": 1.0,
+          "25%": 47.0,
+          "50%": 171.0,
+          "75%": 493.0,
+          "99%": 2256.0,
+          "max": 4374.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "mmsi": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 19464
+      },
+      "port_origin": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 408
+      },
+      "port_destination": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 409
+      },
+      "ts": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 1433690,
+        "unparseable": 0,
+        "min": "2019-01-01 00:00:01",
+        "max": "2019-12-31 23:56:08"
+      }
+    }
+  },
+  {
+    "file": "ungt_cont_throughput.csv",
+    "rows": 25,
+    "columns": 3,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": null,
+    "cols": {
+      "country": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 25,
+        "top_values": {
+          "Anguilla": 1,
+          "Bahamas": 1,
+          "Barbados": 1,
+          "Cayman Islands": 1,
+          "Colombia": 1,
+          "Costa Rica": 1,
+          "Curacao": 1,
+          "Dominica": 1,
+          "Dominican Republic": 1,
+          "Grenada": 1
+        }
+      },
+      "abbr": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 25
+      },
+      "teu": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 25,
+        "stats": {
+          "count": 25.0,
+          "mean": 3382381.88,
+          "std": 11055457.4695,
+          "min": 1950.0,
+          "1%": 2931.36,
+          "25%": 38869.0,
+          "50%": 177076.0,
+          "75%": 1555803.0,
+          "99%": 43957556.72,
+          "max": 55518878.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      }
+    }
+  },
+  {
+    "file": "ungt_country_portcalls.csv",
+    "rows": 38,
+    "columns": 11,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": null,
+    "cols": {
+      "country": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 38,
+        "top_values": {
+          "Anguilla": 1,
+          "Antigua and Barbuda": 1,
+          "Aruba": 1,
+          "Bahamas": 1,
+          "Barbados": 1,
+          "Belize": 1,
+          "Bermuda": 1,
+          "Bonaire, Sint Eustatius and Saba": 1,
+          "British Virgin Islands": 1,
+          "Cayman Islands": 1
+        }
+      },
+      "abbr": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 38
+      },
+      "allships": {
+        "dtype": "float64",
+        "missing_pct": 2.632,
+        "n_unique": 37,
+        "stats": {
+          "count": 37.0,
+          "mean": 10329.1622,
+          "std": 46768.5807,
+          "min": 15.0,
+          "1%": 38.76,
+          "25%": 641.0,
+          "50%": 1267.0,
+          "75%": 3268.0,
+          "99%": 191055.08,
+          "max": 286139.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "liq_bulk": {
+        "dtype": "float64",
+        "missing_pct": 23.684,
+        "n_unique": 28,
+        "stats": {
+          "count": 29.0,
+          "mean": 1380.2069,
+          "std": 4061.0651,
+          "min": 19.0,
+          "1%": 24.88,
+          "25%": 150.0,
+          "50%": 320.0,
+          "75%": 570.0,
+          "99%": 17129.12,
+          "max": 21727.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "liq_petroleum_gas": {
+        "dtype": "float64",
+        "missing_pct": 65.789,
+        "n_unique": 13,
+        "stats": {
+          "count": 13.0,
+          "mean": 274.1538,
+          "std": 528.6738,
+          "min": 9.0,
+          "1%": 11.16,
+          "25%": 48.0,
+          "50%": 70.0,
+          "75%": 243.0,
+          "99%": 1791.12,
+          "max": 1971.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "liq_natural_gas": {
+        "dtype": "float64",
+        "missing_pct": 84.211,
+        "n_unique": 6,
+        "stats": {
+          "count": 6.0,
+          "mean": 168.0,
+          "std": 254.2432,
+          "min": 3.0,
+          "1%": 4.25,
+          "25%": 28.5,
+          "50%": 49.0,
+          "75%": 179.0,
+          "99%": 640.65,
+          "max": 663.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "dry_bulk": {
+        "dtype": "float64",
+        "missing_pct": 47.368,
+        "n_unique": 19,
+        "stats": {
+          "count": 20.0,
+          "mean": 1122.2,
+          "std": 3326.468,
+          "min": 13.0,
+          "1%": 15.66,
+          "25%": 97.5,
+          "50%": 165.0,
+          "75%": 322.25,
+          "99%": 12624.9,
+          "max": 14941.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "dry_breakbulk": {
+        "dtype": "float64",
+        "missing_pct": 2.632,
+        "n_unique": 35,
+        "stats": {
+          "count": 37.0,
+          "mean": 492.3514,
+          "std": 1087.2704,
+          "min": 15.0,
+          "1%": 20.04,
+          "25%": 153.0,
+          "50%": 235.0,
+          "75%": 384.0,
+          "99%": 4733.72,
+          "max": 6713.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "roro": {
+        "dtype": "float64",
+        "missing_pct": 28.947,
+        "n_unique": 26,
+        "stats": {
+          "count": 27.0,
+          "mean": 471.2963,
+          "std": 1342.6386,
+          "min": 11.0,
+          "1%": 12.82,
+          "25%": 38.5,
+          "50%": 106.0,
+          "75%": 210.5,
+          "99%": 5651.16,
+          "max": 6648.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "container": {
+        "dtype": "float64",
+        "missing_pct": 18.421,
+        "n_unique": 30,
+        "stats": {
+          "count": 31.0,
+          "mean": 1486.1935,
+          "std": 3567.7818,
+          "min": 40.0,
+          "1%": 42.4,
+          "25%": 175.0,
+          "50%": 248.0,
+          "75%": 1332.5,
+          "99%": 15005.9,
+          "max": 19574.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "passenger": {
+        "dtype": "float64",
+        "missing_pct": 7.895,
+        "n_unique": 34,
+        "stats": {
+          "count": 35.0,
+          "mean": 6803.5143,
+          "std": 36052.0115,
+          "min": 30.0,
+          "1%": 46.32,
+          "25%": 223.0,
+          "50%": 354.0,
+          "75%": 571.0,
+          "99%": 143003.16,
+          "max": 213902.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      }
+    }
+  },
+  {
+    "file": "ungt_country_portstats.csv",
+    "rows": 333,
+    "columns": 11,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": null,
+    "cols": {
+      "country": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 37,
+        "top_values": {
+          "Anguilla": 9,
+          "Antigua and Barbuda": 9,
+          "Aruba": 9,
+          "Bahamas": 9,
+          "Barbados": 9,
+          "Belize": 9,
+          "Bermuda": 9,
+          "Bonaire, Sint Eustatius and Saba": 9,
+          "British Virgin Islands": 9,
+          "Cayman Islands": 9
+        }
+      },
+      "abbr": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 37
+      },
+      "vesseltype": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 9,
+        "top_values": {
+          "allships": 37,
+          "container": 37,
+          "dry_breakbulk": 37,
+          "dry_bulk": 37,
+          "liq_bulk": 37,
+          "liq_natural_gas": 37,
+          "liq_petroleum_gas": 37,
+          "passenger": 37,
+          "roro": 37
+        }
+      },
+      "med_time": {
+        "dtype": "float64",
+        "missing_pct": 48.048,
+        "n_unique": 110,
+        "stats": {
+          "count": 173.0,
+          "mean": 1.2417,
+          "std": 1.2207,
+          "min": 0.26,
+          "1%": 0.2672,
+          "25%": 0.53,
+          "50%": 0.91,
+          "75%": 1.43,
+          "99%": 5.8252,
+          "max": 10.99
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "avg_age": {
+        "dtype": "float64",
+        "missing_pct": 29.429,
+        "n_unique": 34,
+        "stats": {
+          "count": 235.0,
+          "mean": 16.2511,
+          "std": 6.8849,
+          "min": 3.0,
+          "1%": 7.0,
+          "25%": 12.0,
+          "50%": 15.0,
+          "75%": 18.0,
+          "99%": 39.32,
+          "max": 49.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "avg_gt": {
+        "dtype": "float64",
+        "missing_pct": 29.429,
+        "n_unique": 233,
+        "stats": {
+          "count": 235.0,
+          "mean": 32613.7319,
+          "std": 28938.0827,
+          "min": 1749.0,
+          "1%": 2023.9,
+          "25%": 10861.5,
+          "50%": 24906.0,
+          "75%": 43079.0,
+          "99%": 110946.12,
+          "max": 172533.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "max_gt": {
+        "dtype": "float64",
+        "missing_pct": 29.429,
+        "n_unique": 140,
+        "stats": {
+          "count": 235.0,
+          "mean": 92676.1447,
+          "std": 70045.6093,
+          "min": 2191.0,
+          "1%": 2935.5,
+          "25%": 32531.0,
+          "50%": 66870.0,
+          "75%": 161338.5,
+          "99%": 228081.0,
+          "max": 228081.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "avg_dwt": {
+        "dtype": "float64",
+        "missing_pct": 49.249,
+        "n_unique": 162,
+        "stats": {
+          "count": 169.0,
+          "mean": 23052.7337,
+          "std": 19412.1111,
+          "min": 2176.0,
+          "1%": 2565.64,
+          "25%": 8800.0,
+          "50%": 15305.0,
+          "75%": 32020.0,
+          "99%": 82840.52,
+          "max": 87290.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "max_dwt": {
+        "dtype": "float64",
+        "missing_pct": 49.249,
+        "n_unique": 106,
+        "stats": {
+          "count": 169.0,
+          "mean": 82712.4201,
+          "std": 87939.4344,
+          "min": 3008.0,
+          "1%": 3449.32,
+          "25%": 22755.0,
+          "50%": 51224.0,
+          "75%": 95253.0,
+          "99%": 321789.28,
+          "max": 322829.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "avg_teu": {
+        "dtype": "float64",
+        "missing_pct": 81.381,
+        "n_unique": 31,
+        "stats": {
+          "count": 62.0,
+          "mean": 2035.3548,
+          "std": 1306.531,
+          "min": 286.0,
+          "1%": 286.0,
+          "25%": 1058.5,
+          "50%": 1639.0,
+          "75%": 2810.75,
+          "99%": 5323.0,
+          "max": 5323.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      },
+      "max_teu": {
+        "dtype": "float64",
+        "missing_pct": 81.381,
+        "n_unique": 26,
+        "stats": {
+          "count": 62.0,
+          "mean": 5905.7742,
+          "std": 5305.0309,
+          "min": 515.0,
+          "1%": 515.0,
+          "25%": 1350.0,
+          "50%": 3646.0,
+          "75%": 10125.0,
+          "99%": 19462.0,
+          "max": 19462.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      }
+    }
+  },
+  {
+    "file": "vesseltype_enriched.csv",
+    "rows": 2643,
+    "columns": 4,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 2643
+      },
+      "mmsi": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 2643
+      },
+      "vesseltype": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 7,
+        "top_values": {
+          "serv": 2066,
+          "iisl": 325,
+          "crui": 193,
+          "cont": 24,
+          "tank": 16,
+          "gcar": 10,
+          "bulk": 9
+        }
+      },
+      "share": {
+        "dtype": "float64",
+        "missing_pct": 0.0,
+        "n_unique": 803,
+        "stats": {
+          "count": 2643.0,
+          "mean": 0.9818,
+          "std": 0.0255,
+          "min": 0.9,
+          "1%": 0.9048,
+          "25%": 0.9721,
+          "50%": 0.9956,
+          "75%": 1.0,
+          "99%": 1.0,
+          "max": 1.0
+        },
+        "n_zero": 0,
+        "n_negative": 0
+      }
+    }
+  },
+  {
+    "file": "vesseltype_original.csv",
+    "rows": 12476,
+    "columns": 3,
+    "exact_duplicate_rows_excl_id": 0,
+    "id_unique": true,
+    "cols": {
+      "id": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 12476
+      },
+      "mmsi": {
+        "dtype": "int64",
+        "missing_pct": 0.0,
+        "n_unique": 12476
+      },
+      "vesseltype": {
+        "dtype": "str",
+        "missing_pct": 0.0,
+        "n_unique": 7,
+        "top_values": {
+          "bulk": 4301,
+          "tank": 4153,
+          "cont": 1349,
+          "serv": 1196,
+          "gcar": 1114,
+          "crui": 238,
+          "iisl": 125
+        }
+      }
+    }
+  }
+]

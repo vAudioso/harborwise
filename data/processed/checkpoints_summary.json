@@ -1,0 +1,41 @@
+{
+  "rows": 212263,
+  "rows_by_split": {
+    "train": 134759,
+    "test": 39164,
+    "val": 36681,
+    "purged": 1659
+  },
+  "split_dates": {
+    "train_end": "2019-09-01",
+    "val_end": "2019-11-01"
+  },
+  "share_clearing_within_6h_by_split": {
+    "purged": 0.0096,
+    "test": 0.1472,
+    "train": 0.1484,
+    "val": 0.1376
+  },
+  "train_rows_and_median_remaining_by_checkpoint": {
+    "1.0": {
+      "size": 32460,
+      "median": 22.24
+    },
+    "3.0": {
+      "size": 31781,
+      "median": 20.75
+    },
+    "6.0": {
+      "size": 30481,
+      "median": 18.82
+    },
+    "12.0": {
+      "size": 24318,
+      "median": 19.41
+    },
+    "24.0": {
+      "size": 15719,
+      "median": 20.39
+    }
+  }
+}

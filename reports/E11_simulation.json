@@ -1,0 +1,116 @@
+{
+  "baseline": {
+    "mean_wait_h": 15.519989028665444,
+    "share_waiting": 0.5608671484157866,
+    "mean_idle_h": 4.550849798963784,
+    "mean_time_to_berth_h": 31.13701595608811,
+    "total_fuel_t": 111472.61792731377,
+    "total_co2_t": 347125.73222565505,
+    "mean_speed_kn": 14.918287937743191,
+    "total_cost_usd": 303123396.335153
+  },
+  "portpulse": {
+    "mean_wait_h": 13.122332614312693,
+    "share_waiting": 0.4936075597554197,
+    "mean_idle_h": 5.073681649760232,
+    "mean_time_to_berth_h": 31.65984780688456,
+    "total_fuel_t": 92492.86582247508,
+    "total_co2_t": 288022.7841711874,
+    "mean_speed_kn": 12.442884936075597,
+    "total_cost_usd": 295642247.4442713
+  },
+  "oracle": {
+    "mean_wait_h": 12.253874676036117,
+    "share_waiting": 0.4955530850472485,
+    "mean_idle_h": 4.030798668681575,
+    "mean_time_to_berth_h": 30.616964825805905,
+    "total_fuel_t": 98256.17161192898,
+    "total_co2_t": 305969.7183995468,
+    "mean_speed_kn": 12.87437465258477,
+    "total_cost_usd": 289647987.29452455
+  },
+  "scenarios": 3598,
+  "portpulse_vs_baseline": {
+    "fuel_saving_pct": 17.02638052083294,
+    "co2_saving_t": 59102.94805446768,
+    "wait_reduction_pct": 15.448828023810302,
+    "extra_idle_h_per_call": 0.5228318507964476,
+    "extra_time_to_berth_h_per_call": 0.5228318507964502,
+    "cost_saving_pct": 2.468020938446469,
+    "share_of_oracle_cost_saving_captured": 0.5551704492476593
+  },
+  "by_type": {
+    "bulk": {
+      "scenarios": 393.0,
+      "fuel_saving_pct": 33.85,
+      "baseline_mean_wait_h": 34.1,
+      "portpulse_mean_wait_h": 29.68
+    },
+    "cont": {
+      "scenarios": 959.0,
+      "fuel_saving_pct": 10.88,
+      "baseline_mean_wait_h": 5.92,
+      "portpulse_mean_wait_h": 4.77
+    },
+    "crui": {
+      "scenarios": 538.0,
+      "fuel_saving_pct": 9.13,
+      "baseline_mean_wait_h": 3.31,
+      "portpulse_mean_wait_h": 2.55
+    },
+    "gcar": {
+      "scenarios": 478.0,
+      "fuel_saving_pct": 16.02,
+      "baseline_mean_wait_h": 17.89,
+      "portpulse_mean_wait_h": 15.71
+    },
+    "tank": {
+      "scenarios": 1230.0,
+      "fuel_saving_pct": 31.12,
+      "baseline_mean_wait_h": 21.49,
+      "portpulse_mean_wait_h": 17.96
+    }
+  },
+  "sensitivity": {
+    "main (ETA 2\u201330 h)": {
+      "fuel_saving_pct": 17.02638052083294,
+      "co2_saving_t": 59102.94805446768,
+      "wait_reduction_pct": 15.448828023810302,
+      "extra_idle_h_per_call": 0.5228318507964476,
+      "extra_time_to_berth_h_per_call": 0.5228318507964502,
+      "cost_saving_pct": 2.468020938446469,
+      "share_of_oracle_cost_saving_captured": 0.5551704492476593,
+      "baseline_mean_wait_h": 15.519989028665444
+    },
+    "close in (ETA 2\u201312 h)": {
+      "fuel_saving_pct": 32.07572065048959,
+      "co2_saving_t": 59771.713112811674,
+      "wait_reduction_pct": 10.831336036750649,
+      "extra_idle_h_per_call": 0.367332407957108,
+      "extra_time_to_berth_h_per_call": 0.3673324079571074,
+      "cost_saving_pct": 3.6065157257073377,
+      "share_of_oracle_cost_saving_captured": 0.7119127504970876,
+      "baseline_mean_wait_h": 20.497527124727974
+    },
+    "far out (ETA 12\u201348 h)": {
+      "fuel_saving_pct": 10.695501640509287,
+      "co2_saving_t": 52046.877759416995,
+      "wait_reduction_pct": 18.781269339844144,
+      "extra_idle_h_per_call": 0.6285686033282296,
+      "extra_time_to_berth_h_per_call": 0.6285686033282332,
+      "cost_saving_pct": 1.5050401896043897,
+      "share_of_oracle_cost_saving_captured": 0.38360753865786035,
+      "baseline_mean_wait_h": 11.071444808383292
+    }
+  },
+  "assumptions": {
+    "scenarios": 3598,
+    "eta_window_h": "service-speed ETA uniform 2\u201330 h (distance = ETA x service speed, max 400 nm)",
+    "fuel_price_usd_per_t": 650.0,
+    "lambda_usd_per_ship_h": "implied per vessel type (2 x service-speed daily fuel cost / 24)",
+    "mu_usd_per_idle_h": 500.0,
+    "fuel_model": "cubic speed law, illustrative per-type profiles (portpulse/fuel.py)",
+    "period": "test (Nov\u2013Dec 2019)",
+    "label": "SIMULATED \u2014 not measured savings"
+  }
+}

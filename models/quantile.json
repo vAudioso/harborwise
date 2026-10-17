@@ -1,0 +1,42 @@
+{
+  "quantiles": [
+    0.25,
+    0.5,
+    0.9
+  ],
+  "tuned_params": {
+    "max_depth": 8,
+    "min_child_weight": 5,
+    "subsample": 0.6,
+    "colsample_bytree": 0.5,
+    "reg_alpha": 1,
+    "reg_lambda": 10
+  },
+  "conformal_shift_log_space": [
+    -0.0323467101538526,
+    0.005966866899242085,
+    0.1351127479033538
+  ],
+  "val_uncalibrated": {
+    "coverage_p25": 0.2736293994165917,
+    "pinball_p25": 5.114084478899599,
+    "coverage_p50": 0.49409776178402987,
+    "pinball_p50": 7.679630219655566,
+    "coverage_p90": 0.8471960960715357,
+    "pinball_p90": 5.922881774558189,
+    "interval_p25_p90_coverage": 0.573566696654944,
+    "interval_median_width_h": 24.967510223388672,
+    "coverage": 0.8471960960715357
+  },
+  "val_calibrated": {
+    "coverage_p25": 0.2500204465527112,
+    "pinball_p25": 5.107791839487341,
+    "coverage_p50": 0.4999863689648592,
+    "pinball_p50": 7.676912506979942,
+    "coverage_p90": 0.8999754641367466,
+    "pinball_p90": 5.594556468918348,
+    "interval_p25_p90_coverage": 0.6499550175840353,
+    "interval_median_width_h": 31.74039565296748,
+    "coverage": 0.8999754641367466
+  }
+}

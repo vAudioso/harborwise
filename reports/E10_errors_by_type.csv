@@ -1,0 +1,6 @@
+vesseltype,rows,mae,baseline_mae,median_remaining_h,improvement_pct
+bulk,4683,31.92,36.35,47.85,12.21
+cont,10705,6.32,7.6,11.67,16.83
+crui,3357,4.72,5.94,7.33,20.52
+gcar,4128,22.91,24.88,24.87,7.94
+tank,16291,15.57,16.83,28.29,7.46

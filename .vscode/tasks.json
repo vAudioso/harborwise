@@ -1,0 +1,10 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "Setup: create venv + install", "type": "shell", "command": "make setup", "problemMatcher": [] },
+    { "label": "Pipeline: run everything", "type": "shell", "command": "make pipeline", "problemMatcher": [] },
+    { "label": "Pipeline: quick smoke run", "type": "shell", "command": "make quick", "problemMatcher": [] },
+    { "label": "API: serve", "type": "shell", "command": "make api", "isBackground": true, "problemMatcher": [] },
+    { "label": "Tests", "type": "shell", "command": "make test", "group": { "kind": "test", "isDefault": true }, "problemMatcher": [] }
+  ]
+}

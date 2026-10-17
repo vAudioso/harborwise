@@ -218,3 +218,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- PortPulse ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+logs/
+# Large generated artefacts (rebuild with `python -m pipeline.run_all`)
+data/raw/*.csv
+data/processed/*.parquet
+reports/phase1/*.parquet
+models/*.joblib
+.DS_Store
