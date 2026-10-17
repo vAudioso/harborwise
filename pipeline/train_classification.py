@@ -25,10 +25,10 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from portpulse.config import CLEAR_WITHIN_H, MODELS, REPORTS, SEED
-from portpulse.data import load_checkpoints, split_xy
-from portpulse.models import ClearWithinClassifier, make_prep
-from portpulse.tracking import Timer, classification_metrics, log_run, reset_experiments
+from harborwise.config import CLEAR_WITHIN_H, MODELS, REPORTS, SEED
+from harborwise.data import load_checkpoints, split_xy
+from harborwise.models import ClearWithinClassifier, make_prep
+from harborwise.tracking import Timer, classification_metrics, log_run, reset_experiments
 
 
 def resample(name, Z: pd.DataFrame, y: np.ndarray, vt_idx: int):

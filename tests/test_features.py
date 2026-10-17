@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from portpulse.config import PROCESSED
+from harborwise.config import PROCESSED
 
 pytestmark = pytest.mark.skipif(not (PROCESSED / "checkpoints.parquet").exists(),
                                 reason="run `python -m pipeline.run_all` first")
@@ -11,7 +11,7 @@ pytestmark = pytest.mark.skipif(not (PROCESSED / "checkpoints.parquet").exists()
 
 @pytest.fixture(scope="module")
 def data():
-    from portpulse.data import load_checkpoints, load_port_calls, load_visits
+    from harborwise.data import load_checkpoints, load_port_calls, load_visits
     return load_checkpoints(), load_visits(), load_port_calls()
 
 
@@ -52,7 +52,7 @@ def test_splits_are_chronological_and_purged(data):
 
 
 def test_feature_builder_handles_unseen_berths(data):
-    from portpulse.features import FeatureBuilder
+    from harborwise.features import FeatureBuilder
     cp, _, _ = data
     tr = cp[cp["split"] == "train"]
     fb = FeatureBuilder().fit(tr, tr["remaining_h"].to_numpy())

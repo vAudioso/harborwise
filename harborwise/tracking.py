@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.metrics import (average_precision_score, brier_score_loss, f1_score, mean_absolute_error,
                              mean_squared_error, median_absolute_error, precision_score, recall_score)
 
-from portpulse.config import EXPERIMENTS_CSV, SEED, TRAIN_END, VAL_END
+from harborwise.config import EXPERIMENTS_CSV, SEED, TRAIN_END, VAL_END
 
 
 def regression_metrics(y, pred) -> dict:

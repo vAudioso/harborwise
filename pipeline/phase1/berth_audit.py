@@ -379,7 +379,7 @@ def main(data_dir=None, out_dir=None):
         }
     R["merge_simulation"] = merge_sim
 
-    # Chosen threshold: 1 h (see report). Commercial cargo/passenger ships are the PortPulse target.
+    # Chosen threshold: 1 h (see report). Commercial cargo/passenger ships are the HarborWise target.
     mv = merged_by_thr[1].reset_index(drop=True)
     mv["flag_low_conf"] = mv["confidence_min"] < 0.5
     mv["flag_gt_7d"] = mv["duration_hours"] > 24 * 7

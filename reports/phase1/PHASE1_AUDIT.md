@@ -1,4 +1,4 @@
-# PortPulse — Phase 1 audit (BE1)
+# HarborWise — Phase 1 audit (BE1)
 
 **Question:** Can the port-call table be turned into berth visits that are reliable enough to predict "when will this berth be free"?
 
@@ -85,7 +85,7 @@ The full per-column table is in [data_quality.md](data_quality.md).
 
 Vessel types cover only 47% of vessels (42.7% of calls). The original and enriched tables don't overlap and don't conflict, and joining them causes no row explosion.
 
-Most calls come from small craft that stop and start constantly around the harbour. PortPulse is about large ships waiting for a berth, so **BE2 and BE3 should train on commercial types only.** The unknown-type vessels behave like small craft (short stays, frequent fragments), though this is unverified, so they shouldn't be used as labels. We may still use them as a "harbour busyness" feature.
+Most calls come from small craft that stop and start constantly around the harbour. HarborWise is about large ships waiting for a berth, so **BE2 and BE3 should train on commercial types only.** The unknown-type vessels behave like small craft (short stays, frequent fragments), though this is unverified, so they shouldn't be used as labels. We may still use them as a "harbour busyness" feature.
 
 ## 5. From calls to visits
 

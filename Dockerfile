@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm 
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY portpulse/ portpulse/
+COPY harborwise/ harborwise/
 COPY api/ api/
 COPY data/processed/ data/processed/
 COPY models/ models/

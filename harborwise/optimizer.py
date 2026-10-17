@@ -4,7 +4,7 @@
 F is the fuel bill (voyage at speed v, plus auxiliaries while waiting at anchor). lambda is the
 value of the ship's time. By default it is set to the value that makes the ship's service speed
 optimal when no waiting is expected (d/dv [F(v) + lambda d/v] = 0 at v_service  =>
-lambda = 2 x daily fuel cost at service speed / 24). So without congestion PortPulse
+lambda = 2 x daily fuel cost at service speed / 24). So without congestion HarborWise
 recommends service speed, and any saving it reports comes from avoiding waits (just-in-time
 arrival), not from generic slow steaming. mu is the extra cost of an idle berth (slot risk).
 
@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from portpulse.fuel import VesselProfile, anchor_fuel_t, co2_t, voyage_fuel_t
+from harborwise.fuel import VesselProfile, anchor_fuel_t, co2_t, voyage_fuel_t
 
 DEFAULT_FUEL_PRICE = 650.0   # USD per tonne (VLSFO, order of magnitude; adjustable)
 DEFAULT_LAMBDA = None        # None -> implied from the vessel profile (see module docstring)

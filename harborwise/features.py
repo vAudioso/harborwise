@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from portpulse.config import CHECKPOINTS_H, COMMERCIAL_TYPES, TRAIN_END, VAL_END
+from harborwise.config import CHECKPOINTS_H, COMMERCIAL_TYPES, TRAIN_END, VAL_END
 
 H = np.timedelta64(1, "h")
 VT_CODE = {t: i for i, t in enumerate(COMMERCIAL_TYPES)}

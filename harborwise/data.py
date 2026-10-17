@@ -3,7 +3,7 @@ from functools import lru_cache
 
 import pandas as pd
 
-from portpulse.config import PROCESSED
+from harborwise.config import PROCESSED
 
 
 def _need(name: str):

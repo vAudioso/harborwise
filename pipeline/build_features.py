@@ -6,9 +6,9 @@ import json
 
 import pandas as pd
 
-from portpulse.config import CLEAR_WITHIN_H, PROCESSED, REPORTS, TRAIN_END, VAL_END
-from portpulse.data import load_port_calls, load_visits
-from portpulse.features import FEATURE_DOCS, build_checkpoints
+from harborwise.config import CLEAR_WITHIN_H, PROCESSED, REPORTS, TRAIN_END, VAL_END
+from harborwise.data import load_port_calls, load_visits
+from harborwise.features import FEATURE_DOCS, build_checkpoints
 
 
 def main():

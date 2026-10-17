@@ -11,10 +11,10 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from portpulse.config import CHECKPOINTS_H, CLEAR_WITHIN_H, MODELS, QUANTILES
-from portpulse.data import load_berths, load_port_calls, load_visits
-from portpulse.features import VT_CODE, context_features, time_features, vessel_history
-from portpulse.optimizer import berth_free_samples, samples_from_quantiles
+from harborwise.config import CHECKPOINTS_H, CLEAR_WITHIN_H, MODELS, QUANTILES
+from harborwise.data import load_berths, load_port_calls, load_visits
+from harborwise.features import VT_CODE, context_features, time_features, vessel_history
+from harborwise.optimizer import berth_free_samples, samples_from_quantiles
 
 YEAR_START, YEAR_END = pd.Timestamp("2019-01-01"), pd.Timestamp("2019-12-31 23:59:59")
 

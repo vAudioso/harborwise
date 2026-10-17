@@ -219,7 +219,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# --- PortPulse ---
+# --- HarborWise ---
 .venv/
 __pycache__/
 *.pyc

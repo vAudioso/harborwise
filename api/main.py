@@ -1,4 +1,4 @@
-"""PortPulse API (BE4).
+"""HarborWise API (BE4).
 
 Run:  uvicorn api.main:app --reload        (docs at http://127.0.0.1:8000/docs)
 
@@ -17,10 +17,10 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from portpulse.clearance import ClearanceService
-from portpulse.config import CLEAR_WITHIN_H, EXPERIMENTS_CSV, REPORTS
-from portpulse.fuel import PROFILES, profile, profiles_as_dicts
-from portpulse.optimizer import DEFAULT_FUEL_PRICE, DEFAULT_LAMBDA, DEFAULT_MU, explain, recommend
+from harborwise.clearance import ClearanceService
+from harborwise.config import CLEAR_WITHIN_H, EXPERIMENTS_CSV, REPORTS
+from harborwise.fuel import PROFILES, profile, profiles_as_dicts
+from harborwise.optimizer import DEFAULT_FUEL_PRICE, DEFAULT_LAMBDA, DEFAULT_MU, explain, recommend
 
 DEMO_AS_OF = "2019-11-15T12:00:00"
 STATE: dict = {}
@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
     STATE.clear()
 
 
-app = FastAPI(title="PortPulse API", version="1.0.0", lifespan=lifespan,
+app = FastAPI(title="HarborWise API", version="1.0.0", lifespan=lifespan,
               description="Berth-clearance forecasts and arrival-speed recommendations (replay mode over 2019 Caribbean AIS data).")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
@@ -100,7 +100,7 @@ def health():
 @app.get("/ports")
 def ports():
     s = svc()
-    from portpulse.data import load_ports
+    from harborwise.data import load_ports
     return clean(load_ports().sort_values("visits", ascending=False).to_dict(orient="records")) if s else []
 
 
@@ -200,4 +200,4 @@ def experiments_summary():
 
 @app.get("/")
 def root():
-    return {"name": "PortPulse API", "docs": "/docs", "vessel_types": sorted(PROFILES), "demo_as_of": DEMO_AS_OF}
+    return {"name": "HarborWise API", "docs": "/docs", "vessel_types": sorted(PROFILES), "demo_as_of": DEMO_AS_OF}

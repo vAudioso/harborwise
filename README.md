@@ -2,9 +2,9 @@
 
 A data-driven approach to predicting maritime port call durations and optimizing vessel arrival times.
 
-## PortPulse backend
+## HarborWise backend
 
-PortPulse predicts when a berth will free up and recommends a speed for an incoming ship, so it spends less time at anchor and burns less fuel. The models train on the 2019 Caribbean AIS dataset (Iphar et al., *Data in Brief* 2024).
+HarborWise predicts when a berth will free up and recommends a speed for an incoming ship, so it spends less time at anchor and burns less fuel. The models train on the 2019 Caribbean AIS dataset (Iphar et al., *Data in Brief* 2024).
 
 This repo covers the whole backend: data validation (BE1), features and regression (BE2), classification, imbalance handling, uncertainty and evaluation (BE3), and the optimizer, simulation and API (BE4). The frontend (FE1/FE2) can go in `web/`.
 
@@ -15,7 +15,7 @@ This repo covers the whole backend: data validation (BE1), features and regressi
    - macOS only: XGBoost needs OpenMP. Install it with `brew install libomp`.
 3. Put the 13 raw CSVs in `data/raw/`. They aren't in the repo because they're too large. Download them from the dataset's Zenodo record ([zenodo.org/records/10380638](https://zenodo.org/records/10380638)). The trained models aren't in the repo either, so run step 4 once after cloning.
 4. Build everything with **Run and Debug → "Pipeline: run everything"**, or `make pipeline`. It takes about 15–20 min. `make quick` is a roughly 5-minute smoke run with fewer trees.
-5. Serve the API with **Run and Debug → "API: run PortPulse"**, or `make api`. Then open http://127.0.0.1:8000/docs.
+5. Serve the API with **Run and Debug → "API: run HarborWise"**, or `make api`. Then open http://127.0.0.1:8000/docs.
 6. Run the tests in the Testing panel, or with `make test`.
 
 On a fresh clone, step 4 rebuilds the data and models before step 5 will work.
@@ -27,7 +27,7 @@ data/raw/            13 pipe-delimited CSVs (input, untouched)
 data/processed/      visits, checkpoints, berths, ports, port_calls (parquet)
 pipeline/            one script per step (python -m pipeline.<step>); run_all.py runs them in order
   phase1/            BE1 audit: data-quality profile + berth reconstruction
-portpulse/           library code: config, features, models, fuel, optimizer, clearance service, tracking
+harborwise/           library code: config, features, models, fuel, optimizer, clearance service, tracking
 api/main.py          FastAPI app
 models/              regressor / classifier / quantile .joblib + .json metadata
 experiments/         experiments.csv, one row per run (E00–E11)
@@ -45,7 +45,7 @@ tests/               unit tests, leakage tests, API end-to-end tests
 | `train_classification` | BE3 | "Clears within 6 h": E08 class balance, then E09 class weights plus six resampling strategies × 3 models, with isotonic calibration and threshold choice. | `models/classifier.*` |
 | `train_quantile` | BE3 | P25/P50/P90 clearance window: XGBoost multi-quantile with a conformal shift. | `models/quantile.*` |
 | `evaluate` | BE3 | E10, the only use of the test set. Breaks errors down by type, checkpoint and port, tests unseen ports and lists the biggest misses. | `reports/E10_*`, `reports/figures/` |
-| `simulate` | BE4 | E11 replay of test-period berth occupancies: service speed vs PortPulse vs oracle. | `reports/E11_*` |
+| `simulate` | BE4 | E11 replay of test-period berth occupancies: service speed vs HarborWise vs oracle. | `reports/E11_*` |
 
 **Split:** train Jan–Aug, validation Sep–Oct, test Nov–Dec. The split is on prediction time, and rows whose label crosses into the next period are dropped. Seed 42.
 
@@ -71,7 +71,7 @@ Read these before quoting numbers:
 #### Honest limitations
 
 - Anchorage waiting time is not in the data (port calls only cover stops within about 600 m of quays). E11 derives waits from predicted vs true clearance. It can't be validated against real waits.
-- Fuel figures use the cubic speed law with illustrative engine profiles per vessel type (`portpulse/fuel.py`). Ship time is valued so that service speed is optimal when there's no congestion. Any saving therefore comes from just-in-time arrival, not from generic slow steaming.
+- Fuel figures use the cubic speed law with illustrative engine profiles per vessel type (`harborwise/fuel.py`). Ship time is valued so that service speed is optimal when there's no congestion. Any saving therefore comes from just-in-time arrival, not from generic slow steaming.
 - Vessel type is known for only 47% of ships. The unknown-type vessels are excluded from training.
 - The model was trained on ships alongside for 1–24 h. Predictions for ships alongside more than 48 h are flagged `elapsed_beyond_training_range`.
 
@@ -109,5 +109,5 @@ curl -s -X POST localhost:8000/recommend -H 'content-type: application/json' \
 Build the data and models first, then:
 
 ```bash
-docker build -t portpulse-api . && docker run -p 8000:8000 portpulse-api
+docker build -t harborwise-api . && docker run -p 8000:8000 harborwise-api
 ```

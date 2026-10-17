@@ -4,8 +4,8 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 
-from portpulse.config import CHECKPOINTS_H, QUANTILES
-from portpulse.features import FeatureBuilder, _floor_checkpoint
+from harborwise.config import CHECKPOINTS_H, QUANTILES
+from harborwise.features import FeatureBuilder, _floor_checkpoint
 
 
 def make_prep(feature_set: str = "full", scaler=None) -> Pipeline:

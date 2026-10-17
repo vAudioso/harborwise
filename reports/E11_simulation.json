@@ -9,7 +9,7 @@
     "mean_speed_kn": 14.918287937743191,
     "total_cost_usd": 303123396.335153
   },
-  "portpulse": {
+  "harborwise": {
     "mean_wait_h": 13.122332614312693,
     "share_waiting": 0.4936075597554197,
     "mean_idle_h": 5.073681649760232,
@@ -30,7 +30,7 @@
     "total_cost_usd": 289647987.29452455
   },
   "scenarios": 3598,
-  "portpulse_vs_baseline": {
+  "harborwise_vs_baseline": {
     "fuel_saving_pct": 17.02638052083294,
     "co2_saving_t": 59102.94805446768,
     "wait_reduction_pct": 15.448828023810302,
@@ -44,31 +44,31 @@
       "scenarios": 393.0,
       "fuel_saving_pct": 33.85,
       "baseline_mean_wait_h": 34.1,
-      "portpulse_mean_wait_h": 29.68
+      "harborwise_mean_wait_h": 29.68
     },
     "cont": {
       "scenarios": 959.0,
       "fuel_saving_pct": 10.88,
       "baseline_mean_wait_h": 5.92,
-      "portpulse_mean_wait_h": 4.77
+      "harborwise_mean_wait_h": 4.77
     },
     "crui": {
       "scenarios": 538.0,
       "fuel_saving_pct": 9.13,
       "baseline_mean_wait_h": 3.31,
-      "portpulse_mean_wait_h": 2.55
+      "harborwise_mean_wait_h": 2.55
     },
     "gcar": {
       "scenarios": 478.0,
       "fuel_saving_pct": 16.02,
       "baseline_mean_wait_h": 17.89,
-      "portpulse_mean_wait_h": 15.71
+      "harborwise_mean_wait_h": 15.71
     },
     "tank": {
       "scenarios": 1230.0,
       "fuel_saving_pct": 31.12,
       "baseline_mean_wait_h": 21.49,
-      "portpulse_mean_wait_h": 17.96
+      "harborwise_mean_wait_h": 17.96
     }
   },
   "sensitivity": {
@@ -109,7 +109,7 @@
     "fuel_price_usd_per_t": 650.0,
     "lambda_usd_per_ship_h": "implied per vessel type (2 x service-speed daily fuel cost / 24)",
     "mu_usd_per_idle_h": 500.0,
-    "fuel_model": "cubic speed law, illustrative per-type profiles (portpulse/fuel.py)",
+    "fuel_model": "cubic speed law, illustrative per-type profiles (harborwise/fuel.py)",
     "period": "test (Nov\u2013Dec 2019)",
     "label": "SIMULATED \u2014 not measured savings"
   }

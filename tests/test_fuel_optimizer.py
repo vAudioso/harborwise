@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from portpulse.fuel import CO2_PER_T_FUEL, co2_t, daily_fuel_t, profile, voyage_fuel_t
-from portpulse.optimizer import berth_free_samples, recommend, samples_from_quantiles
+from harborwise.fuel import CO2_PER_T_FUEL, co2_t, daily_fuel_t, profile, voyage_fuel_t
+from harborwise.optimizer import berth_free_samples, recommend, samples_from_quantiles
 
 
 def test_cubic_law_and_voyage_fuel_scale_with_speed_squared():

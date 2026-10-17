@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from pipeline.phase1 import berth_audit, profile_csvs
-from portpulse.config import COMMERCIAL_TYPES, MIN_CONF, PROCESSED, RAW, REPORTS
+from harborwise.config import COMMERCIAL_TYPES, MIN_CONF, PROCESSED, RAW, REPORTS
 
 PHASE1 = REPORTS / "phase1"
 

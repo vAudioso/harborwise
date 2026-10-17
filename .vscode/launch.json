@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "API: run PortPulse (uvicorn --reload)",
+      "name": "API: run HarborWise (uvicorn --reload)",
       "type": "debugpy", "request": "launch", "module": "uvicorn",
       "args": ["api.main:app", "--reload", "--port", "8000"],
       "cwd": "${workspaceFolder}", "justMyCode": true

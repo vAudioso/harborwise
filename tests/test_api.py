@@ -2,7 +2,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from portpulse.config import MODELS
+from harborwise.config import MODELS
 
 pytestmark = pytest.mark.skipif(not (MODELS / "quantile.joblib").exists(), reason="run `python -m pipeline.run_all` first")
 

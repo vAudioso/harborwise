@@ -7,16 +7,16 @@ Outcomes are scored against the occupant's real departure time.
 | Strategy | Mean speed (kn) | Mean wait at anchor (h) | Share that wait | Mean berth idle before arrival (h) | Fuel (t) | CO₂ (t) |
 |---|---:|---:|---:|---:|---:|---:|
 | Baseline: service speed | 14.9 | 15.5 | 56% | 4.6 | 111,473 | 347,126 |
-| **PortPulse** | **12.4** | **13.1** | **49%** | **5.1** | **92,493** | **288,023** |
+| **HarborWise** | **12.4** | **13.1** | **49%** | **5.1** | **92,493** | **288,023** |
 | Oracle (knows true departure) | 12.9 | 12.3 | 50% | 4.0 | 98,256 | 305,970 |
 
-**Simulated effect of PortPulse vs baseline:** fuel −17.0%, CO₂ −59,103 t over the scenarios,
+**Simulated effect of HarborWise vs baseline:** fuel −17.0%, CO₂ −59,103 t over the scenarios,
 anchorage wait −15.4%, berth idle +0.52 h per call, ship's time to berth +0.52 h per call,
 total cost −2.5%. Because ship time is valued so that service speed is optimal without congestion, these savings come from
 avoiding waits (just-in-time arrival), not from generic slow steaming.
-PortPulse captures 56% of the cost saving a perfect forecast would give.
+HarborWise captures 56% of the cost saving a perfect forecast would give.
 
-| Incoming type | Scenarios | Baseline wait (h) | PortPulse wait (h) | Fuel saving |
+| Incoming type | Scenarios | Baseline wait (h) | HarborWise wait (h) | Fuel saving |
 |---|---:|---:|---:|---:|
 | bulk | 393 | 34.1 | 29.7 | 33.9% |
 | cont | 959 | 5.9 | 4.8 | 10.9% |
@@ -33,5 +33,5 @@ PortPulse captures 56% of the cost saving a perfect forecast would give.
 | far out (ETA 12–48 h) | 11.1 | 10.7% | 18.8% | +0.63 | 1.5% | 38% |
 
 **Assumptions (read before quoting any number):** fuel price $650/t; ship time valued at implied per vessel type (2 x service-speed daily fuel cost / 24);
-berth-idle cost $500/h; cubic speed law, illustrative per-type profiles (portpulse/fuel.py). The incoming ship's distance is hypothetical, weather/currents/
+berth-idle cost $500/h; cubic speed law, illustrative per-type profiles (harborwise/fuel.py). The incoming ship's distance is hypothetical, weather/currents/
 port slot rules are ignored, and the data cannot measure real anchorage waits (Phase 1 audit §6). These are simulated savings.

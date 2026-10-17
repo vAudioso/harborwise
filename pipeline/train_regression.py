@@ -15,10 +15,10 @@ from sklearn.linear_model import Ridge
 from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 from xgboost import XGBRegressor
 
-from portpulse.config import MODELS, SEED
-from portpulse.data import load_checkpoints, split_xy
-from portpulse.models import MedianBaseline, RemainingTimeModel, make_prep
-from portpulse.tracking import Timer, log_run, regression_metrics, reset_experiments
+from harborwise.config import MODELS, SEED
+from harborwise.data import load_checkpoints, split_xy
+from harborwise.models import MedianBaseline, RemainingTimeModel, make_prep
+from harborwise.tracking import Timer, log_run, regression_metrics, reset_experiments
 
 
 FITTED = {}
