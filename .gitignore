@@ -231,3 +231,6 @@ data/processed/*.parquet
 reports/phase1/*.parquet
 models/*.joblib
 .DS_Store
+
+# Local tool state
+.claude/
