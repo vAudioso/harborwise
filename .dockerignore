@@ -2,3 +2,9 @@
 data/raw
 logs
 reports/phase1/*.parquet
+
+# Not needed to serve the API
+data/processed/checkpoints.parquet
+models/turnaround_*.joblib
+pipeline
+tests
