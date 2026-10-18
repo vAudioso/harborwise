@@ -1,0 +1,60 @@
+{
+  "model": "XGBoost tuned trial 14",
+  "estimator": "XGBRegressor",
+  "log_target": false,
+  "xgb_best_params": {
+    "max_depth": 8,
+    "learning_rate": 0.02,
+    "min_child_weight": 50,
+    "subsample": 0.6,
+    "colsample_bytree": 0.9,
+    "reg_alpha": 0,
+    "reg_lambda": 10
+  },
+  "dropped_gt_7d_from_train": true,
+  "val_metrics": {
+    "mae": 19.815601752145408,
+    "rmse": 40.264485502895056,
+    "medae": 10.855090959337023
+  },
+  "baseline_val_metrics": {
+    "mae": 21.464800583366692,
+    "rmse": 41.326686164925235,
+    "medae": 12.611944444444447
+  },
+  "features": [
+    "elapsed_h",
+    "hour",
+    "weekday",
+    "month",
+    "hurricane_season",
+    "arrival_hour",
+    "vt_code",
+    "port_occupancy",
+    "berth_occupancy_others",
+    "port_arrivals_24h_all",
+    "port_departures_24h_comm",
+    "port_arrivals_7d_comm",
+    "vessel_prev_visits",
+    "vessel_prev_mean_log_stay",
+    "vessel_prev_visits_port",
+    "vessel_prev_mean_log_stay_port",
+    "vessel_last_stay_port_h",
+    "vessel_median_stay_port_h",
+    "hours_since_last_visit_port",
+    "vessel_prev_visits_berth",
+    "vessel_median_stay_berth_h",
+    "vessel_max_prev_stay_h",
+    "svc_arrivals_berth_1h",
+    "svc_arrivals_berth_3h",
+    "svc_alongside_berth_now",
+    "svc_arrivals_berth_since_arrival",
+    "med_total_berth_type",
+    "med_total_berth",
+    "med_total_port",
+    "med_remaining_cp",
+    "log_berth_train_visits",
+    "q90_total_berth",
+    "share_long_stays_berth"
+  ]
+}

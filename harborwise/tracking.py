@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.metrics import (average_precision_score, brier_score_loss, f1_score, mean_absolute_error,
                              mean_squared_error, median_absolute_error, precision_score, recall_score)
 
-from harborwise.config import EXPERIMENTS_CSV, SEED, TRAIN_END, VAL_END
+from harborwise.config import EXPERIMENTS_CSV, SEED, TRAIN_END, VAL_END, active_segment
 
 
 def regression_metrics(y, pred) -> dict:
@@ -45,7 +45,7 @@ def classification_metrics(y, proba, threshold: float = 0.5) -> dict:
 def log_run(exp_id: str, task: str, model: str, metrics: dict, config: dict | None = None,
             features: list | None = None, n_train: int | None = None, n_eval: int | None = None,
             eval_split: str = "val", train_seconds: float | None = None, notes: str = "") -> dict:
-    row = {"exp_id": exp_id, "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    row = {"exp_id": exp_id, "segment": active_segment(), "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "task": task, "model": model, "eval_split": eval_split,
            "train_end": TRAIN_END, "val_end": VAL_END, "seed": SEED,
            "n_train": n_train, "n_eval": n_eval,
@@ -57,7 +57,7 @@ def log_run(exp_id: str, task: str, model: str, metrics: dict, config: dict | No
         df = pd.concat([pd.read_csv(EXPERIMENTS_CSV), df], ignore_index=True)
     df.to_csv(EXPERIMENTS_CSV, index=False)
     shown = {k: row[k] for k in metrics if k in ("mae", "rmse", "medae", "pr_auc", "f1", "recall", "precision", "coverage")}
-    print(f"[{exp_id}] {task:<14} {model:<38} {shown}", flush=True)
+    print(f"[{exp_id} {active_segment()}] {task:<14} {model:<38} {shown}", flush=True)
     return row
 
 
@@ -65,7 +65,8 @@ def reset_experiments(prefixes: tuple[str, ...]):  # exact experiment IDs, e.g. 
     """Drop earlier rows for these experiment IDs so a rerun replaces them instead of duplicating."""
     if EXPERIMENTS_CSV.exists():
         df = pd.read_csv(EXPERIMENTS_CSV)
-        df = df[~df["exp_id"].astype(str).isin(prefixes)]
+        seg = df["segment"] if "segment" in df else pd.Series("", index=df.index)
+        df = df[~(df["exp_id"].astype(str).isin(prefixes) & ((seg == active_segment()) | seg.isna()))]
         df.to_csv(EXPERIMENTS_CSV, index=False)
 
 

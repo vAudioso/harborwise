@@ -1,0 +1,42 @@
+{
+  "quantiles": [
+    0.25,
+    0.5,
+    0.9
+  ],
+  "tuned_params": {
+    "max_depth": 10,
+    "min_child_weight": 5,
+    "subsample": 0.8,
+    "colsample_bytree": 0.9,
+    "reg_alpha": 5,
+    "reg_lambda": 0.5
+  },
+  "conformal_shift_log_space": [
+    -0.03410986092888191,
+    -0.006769888390065537,
+    0.1033458646458714
+  ],
+  "val_uncalibrated": {
+    "coverage_p25": 0.2865921787709497,
+    "pinball_p25": 1.9808728448943207,
+    "coverage_p50": 0.5106943335993616,
+    "pinball_p50": 2.9168310786008176,
+    "coverage_p90": 0.8537110933758979,
+    "pinball_p90": 2.3625272488042333,
+    "interval_p25_p90_coverage": 0.5671189146049481,
+    "interval_median_width_h": 9.150250434875488,
+    "coverage": 0.8537110933758979
+  },
+  "val_calibrated": {
+    "coverage_p25": 0.25003990422984834,
+    "pinball_p25": 1.977546216334333,
+    "coverage_p50": 0.5,
+    "pinball_p50": 2.918469342131659,
+    "coverage_p90": 0.9,
+    "pinball_p90": 2.256257684705334,
+    "interval_p25_p90_coverage": 0.6499600957701517,
+    "interval_median_width_h": 11.59629502329337,
+    "coverage": 0.9
+  }
+}

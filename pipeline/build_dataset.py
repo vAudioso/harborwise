@@ -5,6 +5,7 @@ Runs the Phase 1 audit (which rebuilds berth visits from port calls), then write
   port_calls.parquet  all-vessel port calls (port, start, end) used only for congestion features
   berths.parquet      berth metadata: port, centroid, polygon, capacity, visit stats
   ports.parquet       ports that have at least one commercial berth
+  service_stops.parquet  harbour-craft stops at berths (tugs, pilots, barges) for departure signals
 
 Usage: python -m pipeline.build_dataset
 """
@@ -43,6 +44,16 @@ def berth_table(visits: pd.DataFrame) -> pd.DataFrame:
                    "max_concurrent", "visits", "median_stay_h", "main_type", "polygon"]].rename(columns={"portid": "port_id"})
 
 
+def write_service_stops():
+    """Harbour-craft stops (non-commercial or unknown type) inside berth polygons, for departure signals."""
+    c = pd.read_parquet(PHASE1 / "berth_visits_candidate.parquet",
+                        columns=["vessel_id", "berth_id", "arrival_time", "departure_time", "vesseltype", "confidence"])
+    s = c[~c["vesseltype"].isin(COMMERCIAL_TYPES) & (c["confidence"] > 0)]
+    s = s.rename(columns={"arrival_time": "start", "departure_time": "end"})[["vessel_id", "berth_id", "start", "end"]]
+    s.to_parquet(PROCESSED / "service_stops.parquet", index=False)
+    return len(s)
+
+
 def main():
     print("Phase 1 profile ...", flush=True)
     profile_csvs.main(RAW, PHASE1)
@@ -62,6 +73,7 @@ def main():
     pc = pc[pc["conf"] > 0].drop(columns="conf").rename(columns={"port": "port_id"})
     pc.to_parquet(PROCESSED / "port_calls.parquet", index=False)
 
+    write_service_stops()
     berths = berth_table(visits)
     berths.to_parquet(PROCESSED / "berths.parquet", index=False)
 

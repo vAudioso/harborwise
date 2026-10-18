@@ -1,26 +1,26 @@
 {
-  "model": "XGBoost tuned trial 16",
+  "model": "XGBoost tuned trial 20",
   "estimator": "XGBRegressor",
   "log_target": false,
   "xgb_best_params": {
-    "max_depth": 8,
-    "learning_rate": 0.05,
-    "min_child_weight": 20,
+    "max_depth": 10,
+    "learning_rate": 0.02,
+    "min_child_weight": 5,
     "subsample": 0.8,
-    "colsample_bytree": 0.5,
-    "reg_alpha": 0,
+    "colsample_bytree": 0.9,
+    "reg_alpha": 5,
     "reg_lambda": 0.5
   },
   "dropped_gt_7d_from_train": true,
   "val_metrics": {
-    "mae": 15.093327155676757,
-    "rmse": 34.06866916074557,
-    "medae": 6.963914322323269
+    "mae": 5.710826297905508,
+    "rmse": 14.87438219564383,
+    "medae": 2.8608306990729435
   },
   "baseline_val_metrics": {
-    "mae": 16.871709649864144,
-    "rmse": 35.44763643020426,
-    "medae": 8.18263888888889
+    "mae": 7.259510818480092,
+    "rmse": 16.805352365839727,
+    "medae": 3.660972222222222
   },
   "features": [
     "elapsed_h",
@@ -44,10 +44,17 @@
     "hours_since_last_visit_port",
     "vessel_prev_visits_berth",
     "vessel_median_stay_berth_h",
+    "vessel_max_prev_stay_h",
+    "svc_arrivals_berth_1h",
+    "svc_arrivals_berth_3h",
+    "svc_alongside_berth_now",
+    "svc_arrivals_berth_since_arrival",
     "med_total_berth_type",
     "med_total_berth",
     "med_total_port",
     "med_remaining_cp",
-    "log_berth_train_visits"
+    "log_berth_train_visits",
+    "q90_total_berth",
+    "share_long_stays_berth"
   ]
 }

@@ -1,0 +1,128 @@
+{
+  "model": "RandomForest",
+  "sampler": "smote_tomek",
+  "N_hours": 6,
+  "threshold": 0.3499999999999999,
+  "val_pr_auc_raw": 0.7583906989013597,
+  "val_metrics_calibrated": {
+    "precision": 0.6547793042969892,
+    "recall": 0.7172590457893051,
+    "f1": 0.684596577017115,
+    "pr_auc": 0.7509161777444223,
+    "brier": 0.1080686980116732,
+    "ece": 9.577015163615936e-05,
+    "threshold": 0.3499999999999999,
+    "tn": 8226,
+    "fp": 1181,
+    "fn": 883,
+    "tp": 2240
+  },
+  "train_positive_rate": 0.25625926371029123,
+  "ranking": [
+    {
+      "model": "RandomForest",
+      "sampler": "smote_tomek",
+      "val_pr_auc": 0.7584
+    },
+    {
+      "model": "RandomForest",
+      "sampler": "smote",
+      "val_pr_auc": 0.7583
+    },
+    {
+      "model": "RandomForest",
+      "sampler": "random_over",
+      "val_pr_auc": 0.7573
+    },
+    {
+      "model": "RandomForest",
+      "sampler": "none",
+      "val_pr_auc": 0.7568
+    },
+    {
+      "model": "RandomForest",
+      "sampler": "class_weight",
+      "val_pr_auc": 0.7561
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "class_weight",
+      "val_pr_auc": 0.7551
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "smote",
+      "val_pr_auc": 0.7543
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "smote_tomek",
+      "val_pr_auc": 0.7539
+    },
+    {
+      "model": "RandomForest",
+      "sampler": "tomek",
+      "val_pr_auc": 0.7528
+    },
+    {
+      "model": "RandomForest",
+      "sampler": "random_under",
+      "val_pr_auc": 0.7527
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "random_over",
+      "val_pr_auc": 0.7508
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "tomek",
+      "val_pr_auc": 0.7507
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "none",
+      "val_pr_auc": 0.7487
+    },
+    {
+      "model": "XGBoost",
+      "sampler": "random_under",
+      "val_pr_auc": 0.7475
+    },
+    {
+      "model": "LogReg",
+      "sampler": "none",
+      "val_pr_auc": 0.6088
+    },
+    {
+      "model": "LogReg",
+      "sampler": "tomek",
+      "val_pr_auc": 0.6073
+    },
+    {
+      "model": "LogReg",
+      "sampler": "smote_tomek",
+      "val_pr_auc": 0.596
+    },
+    {
+      "model": "LogReg",
+      "sampler": "smote",
+      "val_pr_auc": 0.5956
+    },
+    {
+      "model": "LogReg",
+      "sampler": "random_over",
+      "val_pr_auc": 0.5944
+    },
+    {
+      "model": "LogReg",
+      "sampler": "class_weight",
+      "val_pr_auc": 0.5941
+    },
+    {
+      "model": "LogReg",
+      "sampler": "random_under",
+      "val_pr_auc": 0.5937
+    }
+  ]
+}

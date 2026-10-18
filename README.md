@@ -1,10 +1,10 @@
-# port-call-analysis
-
-A data-driven approach to predicting maritime port call durations and optimizing vessel arrival times.
-
-## HarborWise backend
+# HarborWise
 
 HarborWise predicts when a berth will free up and recommends a speed for an incoming ship, so it spends less time at anchor and burns less fuel. The models train on the 2019 Caribbean AIS dataset (Iphar et al., *Data in Brief* 2024).
+
+**Scope:** HarborWise is built for **scheduled liner ships (container and cruise)**. They repeat ports and berths on fixed rotations, so their stays are predictable. Tankers, bulk carriers and general cargo ships get their own models, labelled **lower confidence** in the API.
+
+## Backend
 
 This repo covers the whole backend: data validation (BE1), features and regression (BE2), classification, imbalance handling, uncertainty and evaluation (BE3), and the optimizer, simulation and API (BE4). The frontend (FE1/FE2) can go in `web/`.
 
@@ -41,12 +41,14 @@ tests/               unit tests, leakage tests, API end-to-end tests
 |---|---|---|---|
 | `build_dataset` | BE1 | Profiles all CSVs. Rebuilds berth visits by testing stop positions against berth polygons, then merges stays split by gaps under 1 h. Keeps commercial ships with conf ≥ 0.5. | `data/processed/*.parquet`, `reports/phase1/` |
 | `build_features` | BE2 | Builds checkpoint rows at 1/3/6/12/24 h alongside, labelled with hours left. Uses leakage-safe congestion and vessel-history features and a purged chronological split. | `checkpoints.parquet`, `reports/leakage_check.md` |
-| `train_turnaround` | BE2 | Turnaround time predicted at arrival: Random Forest, HistGradientBoosting and GradientBoosting vs global and port medians. | `models/turnaround.*`, `reports/turnaround_comparison.md` |
-| `train_regression` | BE2 | E00 baselines → E07 tuned XGBoost. | `models/regressor.*` |
-| `train_classification` | BE3 | "Clears within 6 h": E08 class balance, then E09 class weights plus six resampling strategies × 3 models, with isotonic calibration and threshold choice. | `models/classifier.*` |
-| `train_quantile` | BE3 | P25/P50/P90 clearance window: XGBoost multi-quantile with a conformal shift. | `models/quantile.*` |
-| `evaluate` | BE3 | E10, the only use of the test set. Breaks errors down by type, checkpoint and port, tests unseen ports and lists the biggest misses. | `reports/E10_*`, `reports/figures/` |
-| `simulate` | BE4 | E11 replay of test-period berth occupancies: service speed vs HarborWise vs oracle. | `reports/E11_*` |
+| `train_turnaround` | BE2 | Turnaround time predicted at arrival: Random Forest, HistGradientBoosting and GradientBoosting vs global and port medians. | `models/turnaround_<segment>.*`, `reports/turnaround_comparison_<segment>.md` |
+| `train_regression` | BE2 | E00 baselines → E07 tuned XGBoost. | `models/regressor_<segment>.*` |
+| `train_classification` | BE3 | "Clears within 6 h": E08 class balance, then E09 class weights plus six resampling strategies × 3 models, with isotonic calibration and threshold choice. | `models/classifier_<segment>.*` |
+| `train_quantile` | BE3 | P25/P50/P90 clearance window: XGBoost multi-quantile with a conformal shift. | `models/quantile_<segment>.*` |
+| `evaluate` | BE3 | E10, the only use of the test set. Breaks errors down by type, checkpoint and port, tests unseen ports and lists the biggest misses. | `reports/E10_*_<segment>.*`, `reports/figures/` |
+| `simulate` | BE4 | E11 replay of test-period berth occupancies: service speed vs HarborWise vs oracle. | `reports/E11_*_<segment>.*` |
+
+**Segments:** every step from `train_turnaround` on runs twice: once for `liner` (container, cruise) and once for `other` (tanker, bulk, general cargo). Each ship is scored by its own segment's models. To run one step for one segment: `HARBORWISE_SEGMENT=other python -m pipeline.train_regression`.
 
 **Split:** train Jan–Aug, validation Sep–Oct, test Nov–Dec. The split is on prediction time, and rows whose label crosses into the next period are dropped. Seed 42.
 
@@ -54,38 +56,59 @@ tests/               unit tests, leakage tests, API end-to-end tests
 
 These are test-set numbers (Nov–Dec 2019). Validation decided everything; the test set was used once.
 
-#### Turnaround time predicted at arrival
+#### Headline: liner ships (container and cruise)
 
-How long will a ship stay alongside, predicted the moment it berths? Test set: 9,558 visits, median stay 22.6 h.
+**Turnaround time predicted at arrival** (3,886 test visits, median stay 12.8 h):
 
 | Model | MAE (h) | RMSE (h) | Within 1 h |
 |---|---:|---:|---:|
-| Global median | 21.32 | 39.11 | 4.1% |
-| Port median | 17.67 | 35.90 | 9.2% |
-| **Random Forest** | **13.38** | **30.89** | 15.2% |
-| HistGradientBoosting | 13.50 | 31.06 | 15.9% |
-| GradientBoosting | 13.52 | 30.95 | 15.2% |
+| Global median | 8.13 | 15.79 | 9.5% |
+| Port median | 7.06 | 14.59 | 21.2% |
+| Random Forest | 5.31 | 12.63 | 26.5% |
+| HistGradientBoosting | 5.21 | 12.48 | 29.0% |
+| **GradientBoosting** | **5.20** | **12.33** | 28.4% |
 
-Random Forest beats the port median by 24% and the global median by 37%. Accuracy varies a lot by ship type. Cruise ships, which run fixed schedules, have a median error of 0.9 h, and 52% are within 1 h. Bulk carriers have a median error of 15.6 h.
+GradientBoosting is 26% more accurate than the port median and 36% more accurate than the global median. Its median error is 2.5 h. Cruise ships, which run fixed timetables, have a median error of 0.8 h, and 56% are within 1 h. Container ships have a median error of 3.4 h.
 
-An average error under 1 hour isn't reachable with this data. The dataset has no cargo volumes, crane or labour plans, or schedules, which are what decide when a ship leaves. See `reports/turnaround_comparison.md`.
-
-#### Remaining time and other models
-
-| | Result |
+| Other liner results | |
 |---|---|
-| Training data | 51,729 commercial berth visits, 6,218 ships, 832 berths, 159 ports → 212k checkpoint rows |
-| **Remaining time, MAE** | **14.55 h** for XGBoost (RMSE 32.5 h) vs 16.56 h for the best baseline (berth median × checkpoint): **12.1% better**. Excluding stays over 7 days: 12.12 h. |
-| Unseen ports (31 held out) | Model 17.4 h vs baseline 15.8 h. **The model does not generalise to new ports.** Use it for ports it has seen. |
-| **Clears within 6 h** | Random forest with class weights, isotonic-calibrated. PR-AUC 0.66 (positive rate 14.7%), precision 0.57, recall 0.69, ECE 0.009 |
-| **Clearance window coverage** | P25 23.7% · P50 48.8% · P90 89.6% (targets 25/50/90) |
-| **Speed simulation (E11, SIMULATED)** | Fuel −16%, anchorage wait −15%, berth idle +0.5 h per call. Captures 57% of a perfect forecast's cost saving. |
+| Remaining time while alongside (MAE) | **5.60 h** (RMSE 13.2) vs 6.90 h for the berth median and 7.30 h for the port median |
+| Ports held out of training (16) | Model 12.4 h vs baseline 15.4 h: it does generalise to new ports for liner ships |
+| "Clears within 6 h" | Random forest with SMOTE + Tomek links, isotonic-calibrated: precision 0.65, recall 0.76, PR-AUC 0.75 (positive rate 25%) |
+| Clearance window coverage | P25 22% · P50 47% · P90 89% (targets 25/50/90) |
+| **Speed simulation (SIMULATED)** | Anchorage wait −21%, fuel −6.6% (2.9 t per arrival), about **$1,550 net saved per arrival**. Captures 51% of a perfect forecast's saving. |
 
-What the imbalance experiments found (E08–E09): class weighting and random oversampling helped the random forest's F1 a little, while SMOTE and Tomek links brought no gain over plain class weights. Resampling distorts probabilities (see `reports/figures/classification_pr_calibration.png`), which is why the chosen model is recalibrated on untouched validation data. Scaling (E04) makes no measurable difference: Ridge is effectively scale-invariant here and tree models are invariant by construction.
+#### Lower confidence: tankers, bulk carriers, general cargo
+
+These ships stay longer (median 35 h) and less predictably.
+
+| Turnaround at arrival | MAE (h) | RMSE (h) |
+|---|---:|---:|
+| Global median | 25.67 | 44.76 |
+| Port median | 23.35 | 42.99 |
+| **Random Forest** | **18.91** | **38.56** |
+| HistGradientBoosting | 19.02 | 38.41 |
+| GradientBoosting | 19.01 | 38.29 |
+
+- **Remaining time:** 19.6 h MAE, against 21.5 h for the berth median.
+- **"Clears within 6 h":** PR-AUC 0.49.
+- **Clearance window:** coverage is on target, at 25/50/90%.
+- **Speed simulation:** fuel −30%, wait −14%, about $2,490 net saved per arrival.
+
+The savings are larger than for liners because these ships wait longer, but the forecasts behind them are less reliable.
+
+**Why not under 1 hour of error?** Departure depends on cargo volumes, crane and labour plans and schedules, and none of these are in the data. Liner ships get close because their schedules repeat.
+
+**Imbalance experiments (E08–E09):**
+- **Liner ships:** for the random forest, every resampling strategy scored within 0.003 PR-AUC of the others. SMOTE + Tomek links came out marginally best.
+- **Other ships:** no resampling at all was best.
+- **Probabilities:** resampling distorts them, so the chosen classifier is recalibrated on untouched validation data.
+- **Scaling (E04):** no measurable difference.
 
 Read these before quoting numbers:
 - `reports/phase1/PHASE1_AUDIT.md`: what one record means, and why only commercial ships are used.
-- `reports/E11_simulation.md`: the assumptions behind every fuel figure.
+- `reports/E11_simulation_liner.md`: the assumptions behind every fuel figure.
+- `reports/pitch_script.md`: the 3-minute pitch script.
 
 #### Honest limitations
 

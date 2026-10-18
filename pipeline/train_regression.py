@@ -15,7 +15,7 @@ from sklearn.linear_model import Ridge
 from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 from xgboost import XGBRegressor
 
-from harborwise.config import MODELS, SEED
+from harborwise.config import MODELS, SEED, seg_path
 from harborwise.data import load_checkpoints, split_xy
 from harborwise.models import MedianBaseline, RemainingTimeModel, make_prep
 from harborwise.tracking import Timer, log_run, regression_metrics, reset_experiments
@@ -133,12 +133,12 @@ def main(quick: bool = False):
     winner = min(FITTED, key=lambda k: FITTED[k][0])
     final = FITTED[winner][1]
     winner_key = winner
-    joblib.dump(final, MODELS / "regressor.joblib")
+    joblib.dump(final, seg_path(MODELS, "regressor.joblib"))
     meta = {"model": winner_key, "estimator": type(final.model).__name__, "log_target": final.log_target,
             "xgb_best_params": best_params, "dropped_gt_7d_from_train": bool(drop_long),
             "val_metrics": regression_metrics(yva, final.predict(Xva)), "baseline_val_metrics": results["E00_berth"],
             "features": final.feature_names}
-    (MODELS / "regressor.json").write_text(json.dumps(meta, indent=2))
+    (seg_path(MODELS, "regressor.json")).write_text(json.dumps(meta, indent=2))
     print(json.dumps({k: round(v["mae"], 3) for k, v in results.items()}, indent=2))
 
 

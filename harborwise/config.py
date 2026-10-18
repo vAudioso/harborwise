@@ -30,3 +30,30 @@ QUANTILES = (0.25, 0.5, 0.9)
 
 for _d in (PROCESSED, MODELS, EXPERIMENTS, REPORTS):
     _d.mkdir(parents=True, exist_ok=True)
+
+# ---- Segments ------------------------------------------------------------------------------
+# HarborWise is scoped to scheduled liner ships (container, cruise): they repeat ports and
+# berths on fixed rotations, so their stays are predictable. Tankers, bulk carriers and general
+# cargo get their own, lower-confidence models. Each ship type belongs to exactly one segment.
+import os  # noqa: E402
+
+SEGMENTS = {"liner": ("cont", "crui"), "other": ("tank", "bulk", "gcar")}
+SEGMENT_OF = {t: s for s, types in SEGMENTS.items() for t in types}
+SEGMENT_CONFIDENCE = {"liner": "high", "other": "lower"}
+_ACTIVE = {"segment": os.environ.get("HARBORWISE_SEGMENT", "liner")}
+
+
+def set_segment(name: str):
+    if name not in SEGMENTS:
+        raise ValueError(f"unknown segment {name!r}; expected one of {list(SEGMENTS)}")
+    _ACTIVE["segment"] = name
+
+
+def active_segment() -> str:
+    return _ACTIVE["segment"]
+
+
+def seg_path(folder, filename: str, segment: str | None = None):
+    """models/regressor.joblib -> models/regressor_liner.joblib (active segment by default)."""
+    stem, dot, ext = filename.rpartition(".")
+    return folder / f"{stem}_{segment or active_segment()}.{ext}"

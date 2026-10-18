@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from harborwise.clearance import ClearanceService
-from harborwise.config import CLEAR_WITHIN_H, EXPERIMENTS_CSV, REPORTS
+from harborwise.config import CLEAR_WITHIN_H, EXPERIMENTS_CSV, REPORTS, SEGMENT_CONFIDENCE, SEGMENTS, seg_path
 from harborwise.fuel import PROFILES, profile, profiles_as_dicts
 from harborwise.optimizer import DEFAULT_FUEL_PRICE, DEFAULT_LAMBDA, DEFAULT_MU, explain, recommend
 
@@ -37,7 +37,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="HarborWise API", version="1.0.0", lifespan=lifespan,
-              description="Berth-clearance forecasts and arrival-speed recommendations (replay mode over 2019 Caribbean AIS data).")
+              description="Berth-clearance forecasts and arrival-speed recommendations for scheduled liner ships (container, cruise); "
+                          "tankers, bulk and general cargo are served with lower-confidence models. Replay mode over 2019 Caribbean AIS data.")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 VesselType = Literal["cont", "tank", "bulk", "gcar", "crui"]
@@ -156,7 +157,7 @@ def recommend_speed(req: RecommendRequest):
 
     return clean({
         "berth_id": req.berth_id, "as_of": fc["as_of"], "vessel_profile": prof.__dict__,
-        "clearance": {"status": fc["status"], "hours": fc["clearance_h"], "time": fc["clearance_time"],
+        "clearance": {"status": fc["status"], "confidence": fc["confidence"], "hours": fc["clearance_h"], "time": fc["clearance_time"],
                       "capacity": fc["capacity"], "occupants": fc["occupants"]},
         "recommended": view(best), "baseline_service_speed": view(base),
         "vs_baseline": {"fuel_saved_t": base.total_fuel_t - best.total_fuel_t,
@@ -177,7 +178,7 @@ def vessel_profiles():
 
 
 @app.get("/experiments")
-def experiments(task: str | None = None, exp_id: str | None = None):
+def experiments(task: str | None = None, exp_id: str | None = None, segment: str | None = None):
     if not EXPERIMENTS_CSV.exists():
         return []
     df = pd.read_csv(EXPERIMENTS_CSV)
@@ -185,19 +186,23 @@ def experiments(task: str | None = None, exp_id: str | None = None):
         df = df[df["task"] == task]
     if exp_id:
         df = df[df["exp_id"] == exp_id]
+    if segment and "segment" in df:
+        df = df[df["segment"] == segment]
     return clean(df.replace({np.nan: None}).to_dict(orient="records"))
 
 
 @app.get("/experiments/summary")
 def experiments_summary():
     out = {}
-    for name in ("E10_final_test.json", "E11_simulation.json"):
-        p = REPORTS / name
-        if p.exists():
-            out[name.split(".")[0]] = json.loads(p.read_text())
+    for seg in SEGMENTS:
+        for name in ("E10_final_test.json", "E11_simulation.json", "turnaround_comparison.json"):
+            p = seg_path(REPORTS, name, seg)
+            if p.exists():
+                out.setdefault(seg, {})[name.split(".")[0]] = json.loads(p.read_text())
     return out
 
 
 @app.get("/")
 def root():
-    return {"name": "HarborWise API", "docs": "/docs", "vessel_types": sorted(PROFILES), "demo_as_of": DEMO_AS_OF}
+    return {"name": "HarborWise API", "docs": "/docs", "vessel_types": sorted(PROFILES), "demo_as_of": DEMO_AS_OF,
+            "segments": {seg: {"types": list(types), "confidence": SEGMENT_CONFIDENCE[seg]} for seg, types in SEGMENTS.items()}}

@@ -12,11 +12,13 @@ pytestmark = pytest.mark.skipif(not (PROCESSED / "checkpoints.parquet").exists()
 @pytest.fixture(scope="module")
 def data():
     from harborwise.data import load_checkpoints, load_port_calls, load_visits
-    return load_checkpoints(), load_visits(), load_port_calls()
+    return load_checkpoints("all"), load_visits(), load_port_calls()
 
 
 def test_congestion_features_use_only_the_past(data):
+    from harborwise.data import load_service_stops
     cp, visits, calls = data
+    stops = load_service_stops()
     rows = cp.sample(60, random_state=0)
     for _, r in rows.iterrows():
         t = r["t"]
@@ -31,6 +33,9 @@ def test_congestion_features_use_only_the_past(data):
         assert r["port_departures_24h_comm"] == len(left)
         c = calls[(calls["port_id"] == r["port_id"]) & (calls["ts_start"] > t - pd.Timedelta(hours=24)) & (calls["ts_start"] <= t)]
         assert r["port_arrivals_24h_all"] == len(c)
+        st = stops[(stops["berth_id"] == r["berth_id"]) & (stops["start"] <= t)]
+        assert r["svc_arrivals_berth_1h"] == (st["start"] > t - pd.Timedelta(hours=1)).sum()
+        assert r["svc_alongside_berth_now"] == (st["end"] > t).sum()
 
 
 def test_vessel_history_only_uses_finished_earlier_visits(data):
@@ -41,6 +46,14 @@ def test_vessel_history_only_uses_finished_earlier_visits(data):
         assert (prev["departure_time"] <= r["arrival_time"]).all()
         assert r["vessel_prev_visits"] == len(prev)
         assert r["vessel_prev_mean_log_stay"] == pytest.approx(np.log1p(prev["duration_hours"]).mean())
+
+
+def test_segments_split_ship_types_cleanly():
+    from harborwise.config import COMMERCIAL_TYPES, SEGMENT_OF, SEGMENTS
+    from harborwise.data import load_checkpoints
+    assert sorted(SEGMENT_OF) == sorted(COMMERCIAL_TYPES)
+    for seg, types in SEGMENTS.items():
+        assert set(load_checkpoints(seg)["vesseltype"]) == set(types)
 
 
 def test_splits_are_chronological_and_purged(data):

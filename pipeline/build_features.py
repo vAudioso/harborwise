@@ -7,13 +7,13 @@ import json
 import pandas as pd
 
 from harborwise.config import CLEAR_WITHIN_H, PROCESSED, REPORTS, TRAIN_END, VAL_END
-from harborwise.data import load_port_calls, load_visits
+from harborwise.data import load_port_calls, load_service_stops, load_visits
 from harborwise.features import FEATURE_DOCS, build_checkpoints
 
 
 def main():
     visits, port_calls = load_visits(), load_port_calls()
-    cp = build_checkpoints(visits, port_calls)
+    cp = build_checkpoints(visits, port_calls, service_stops=load_service_stops())
     cp.to_parquet(PROCESSED / "checkpoints.parquet", index=False)
 
     counts = cp["split"].value_counts().to_dict()

@@ -17,8 +17,8 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from sklearn.ensemble import GradientBoostingRegressor, HistGradientBoostingRegressor, RandomForestRegressor  # noqa: E402
 
-from harborwise.config import MODELS, REPORTS, SEED  # noqa: E402
-from harborwise.data import load_port_calls, load_visits  # noqa: E402
+from harborwise.config import MODELS, REPORTS, SEED, SEGMENTS, active_segment, seg_path  # noqa: E402
+from harborwise.data import load_port_calls, load_service_stops, load_visits  # noqa: E402
 from harborwise.features import build_checkpoints  # noqa: E402
 from harborwise.models import MedianBaseline, RemainingTimeModel, make_prep  # noqa: E402
 from harborwise.tracking import Timer, log_run, regression_metrics, reset_experiments  # noqa: E402
@@ -50,7 +50,8 @@ def candidates():
 
 def main():
     reset_experiments(("T00", "T01", "T02"))
-    rows = build_checkpoints(load_visits(), load_port_calls(), checkpoints=(0,))
+    rows = build_checkpoints(load_visits(), load_port_calls(), checkpoints=(0,), service_stops=load_service_stops())
+    rows = rows[rows["vesseltype"].isin(SEGMENTS[active_segment()])]
     tr, va, te = (rows[rows["split"] == s] for s in ("train", "val", "test"))
     tr = tr[~tr["flag_gt_7d"]]  # E01 finding: long lay-ups hurt training; val/test keep them
     ytr, yva, yte = (d["remaining_h"].to_numpy() for d in (tr, va, te))
@@ -78,7 +79,7 @@ def main():
         log_run("T02", "turnaround", f"TEST {name}", r["test"], n_train=len(tr), n_eval=len(te), eval_split="test")
 
     winner = min((k for k in results if results[k]["kind"] == "model"), key=lambda k: results[k]["val"]["mae"])
-    joblib.dump(fitted[winner], MODELS / "turnaround.joblib")
+    joblib.dump(fitted[winner], seg_path(MODELS, "turnaround.joblib"))
     pred = fitted[winner].predict(te)
     by_type = (pd.DataFrame({"type": te["vesseltype"].to_numpy(), "err": np.abs(pred - yte), "y": yte})
                .groupby("type").agg(rows=("err", "size"), mae=("err", "mean"), median_abs_err=("err", "median"),
@@ -86,9 +87,9 @@ def main():
     summary = {"rows": {"train": len(tr), "val": len(va), "test": len(te)}, "winner": winner, "results": results,
                "winner_by_type_test": by_type.to_dict(orient="index"),
                "test_median_turnaround_h": float(np.median(yte))}
-    (MODELS / "turnaround.json").write_text(json.dumps({"winner": winner, "target": results[winner]["target"],
+    (seg_path(MODELS, "turnaround.json")).write_text(json.dumps({"winner": winner, "target": results[winner]["target"],
                                                          "val": results[winner]["val"], "test": results[winner]["test"]}, indent=2))
-    (REPORTS / "turnaround_comparison.json").write_text(json.dumps(summary, indent=2, default=str))
+    (seg_path(REPORTS, "turnaround_comparison.json")).write_text(json.dumps(summary, indent=2, default=str))
     write_report(summary, by_type)
     chart(results)
     for k, r in results.items():
@@ -111,13 +112,14 @@ def chart(results):
     ax.legend(frameon=False)
     fig.tight_layout()
     (REPORTS / "figures").mkdir(exist_ok=True)
-    fig.savefig(REPORTS / "figures" / "turnaround_mae_rmse.png")
+    fig.savefig(seg_path(REPORTS / "figures", "turnaround_mae_rmse.png"))
     plt.close(fig)
 
 
 def write_report(S, by_type):
     R = S["results"]
-    lines = ["# Turnaround time at arrival: model comparison", "",
+    seg = active_segment()
+    lines = [f"# Turnaround time at arrival: model comparison ({seg} ships: {', '.join(SEGMENTS[seg])})", "",
              f"Predict how long a commercial ship will stay alongside, at the moment it berths. Train Jan–Aug ({S['rows']['train']:,} visits, "
              f"stays over 7 days excluded), validation Sep–Oct ({S['rows']['val']:,}), test Nov–Dec ({S['rows']['test']:,}, scored once). "
              f"Median turnaround in the test set: {S['test_median_turnaround_h']:.1f} h.", "",
@@ -134,7 +136,7 @@ def write_report(S, by_type):
               "crane, labour or schedule information, which is what actually decides when a ship leaves. An average error of under an hour "
               "would need those inputs, or information from after arrival (which would be leakage). See the remaining-time model "
               "(E10 report): errors shrink as the stay goes on, because elapsed time is informative.", ""]
-    (REPORTS / "turnaround_comparison.md").write_text("\n".join(lines))
+    (seg_path(REPORTS, "turnaround_comparison.md")).write_text("\n".join(lines))
 
 
 if __name__ == "__main__":

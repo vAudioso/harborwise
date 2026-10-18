@@ -21,7 +21,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from harborwise.config import MODELS, REPORTS, SEED
+from harborwise.config import MODELS, REPORTS, SEED, SEGMENTS, active_segment, seg_path
 from harborwise.data import load_berths, load_checkpoints, load_visits
 from harborwise.fuel import anchor_fuel_t, co2_t, profile, voyage_fuel_t
 from harborwise.optimizer import implied_time_value, recommend, samples_from_quantiles
@@ -104,10 +104,10 @@ def summarise(df):
 def main(n_scenarios: int = 4000, price: float = 650.0, lam: float | None = None, mu: float = 500.0):
     reset_experiments(("E11",))
     sc = scenarios(n_scenarios)
-    Q = joblib.load(MODELS / "quantile.joblib").predict(sc)
+    Q = joblib.load(seg_path(MODELS, "quantile.joblib")).predict(sc)
     windows = {"main (ETA 2–30 h)": (2, 30), "close in (ETA 2–12 h)": (2, 12), "far out (ETA 12–48 h)": (12, 48)}
     runs = {name: run_scenarios(sc, Q, w, price, lam, mu) for name, w in windows.items()}
-    runs["main (ETA 2–30 h)"].to_csv(REPORTS / "E11_simulation_scenarios.csv", index=False)
+    runs["main (ETA 2–30 h)"].to_csv(seg_path(REPORTS, "E11_simulation_scenarios.csv"), index=False)
     S = summarise(runs["main (ETA 2–30 h)"])
     S["sensitivity"] = {name: summarise(df)["harborwise_vs_baseline"] | {"baseline_mean_wait_h": float(df["baseline_wait_h"].mean())}
                         for name, df in runs.items()}
@@ -118,7 +118,7 @@ def main(n_scenarios: int = 4000, price: float = 650.0, lam: float | None = None
                         "period": "test (Nov–Dec 2019)", "label": "SIMULATED — not measured savings"}
     for name in ("baseline", "harborwise", "oracle"):
         log_run("E11", "simulation", name, {k: float(v) for k, v in S[name].items()}, S["assumptions"], n_eval=len(sc), eval_split="test")
-    (REPORTS / "E11_simulation.json").write_text(json.dumps(S, indent=2, default=float))
+    (seg_path(REPORTS, "E11_simulation.json")).write_text(json.dumps(S, indent=2, default=float))
     write_report(S)
     print(json.dumps(S["harborwise_vs_baseline"], indent=2))
 
@@ -131,7 +131,8 @@ def write_report(S):
                      for n, v in S["sensitivity"].items())
     rows = "\n".join(f"| {t} | {v['scenarios']:.0f} | {v['baseline_mean_wait_h']:.1f} | {v['harborwise_mean_wait_h']:.1f} | {v['fuel_saving_pct']:.1f}% |"
                      for t, v in S["by_type"].items())
-    md = f"""# E11 — Arrival-speed simulation (SIMULATED)
+    seg = active_segment()
+    md = f"""# E11 — Arrival-speed simulation, {seg} berths ({', '.join(SEGMENTS[seg])} occupants) (SIMULATED)
 
 {a['scenarios']:,} replayed scenarios from the test period ({a['period']}). Each one: a real commercial ship is alongside a
 single-slot berth; the next ship that really used that berth is on its way ({a['eta_window_h']}) and must pick a speed.
@@ -163,7 +164,7 @@ HarborWise captures {c['share_of_oracle_cost_saving_captured']:.0%} of the cost 
 berth-idle cost ${a['mu_usd_per_idle_h']:.0f}/h; {a['fuel_model']}. The incoming ship's distance is hypothetical, weather/currents/
 port slot rules are ignored, and the data cannot measure real anchorage waits (Phase 1 audit §6). These are simulated savings.
 """
-    (REPORTS / "E11_simulation.md").write_text(md)
+    (seg_path(REPORTS, "E11_simulation.md")).write_text(md)
 
 
 if __name__ == "__main__":

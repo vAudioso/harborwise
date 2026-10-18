@@ -12,7 +12,7 @@ import joblib
 import numpy as np
 from xgboost import XGBRegressor
 
-from harborwise.config import MODELS, QUANTILES, SEED
+from harborwise.config import MODELS, QUANTILES, SEED, seg_path
 from harborwise.data import load_checkpoints, split_xy
 from harborwise.models import ClearanceQuantileModel, make_prep
 from harborwise.tracking import Timer, log_run, reset_experiments
@@ -37,7 +37,7 @@ def main():
     cp = load_checkpoints()
     Xtr, ytr = split_xy(cp, "train")
     Xva, yva = split_xy(cp, "val")
-    reg_meta = json.loads((MODELS / "regressor.json").read_text())
+    reg_meta = json.loads((seg_path(MODELS, "regressor.json")).read_text())
     if reg_meta.get("dropped_gt_7d_from_train"):
         keep = ~Xtr["flag_gt_7d"].to_numpy()
         Xtr, ytr = Xtr[keep], ytr[keep]
@@ -57,8 +57,8 @@ def main():
     cal = quantile_metrics(yva, qm.predict(Xva))
     log_run("E09Q", "quantile", "XGBoost quantile + conformal shift", cal, {"shift_log_space": qm.shift_.round(4).tolist()},
             None, len(Xtr), len(Xva), notes="shift fitted on validation, so validation coverage is by construction; see E10")
-    joblib.dump(qm, MODELS / "quantile.joblib")
-    (MODELS / "quantile.json").write_text(json.dumps({"quantiles": QUANTILES, "tuned_params": tuned,
+    joblib.dump(qm, seg_path(MODELS, "quantile.joblib"))
+    (seg_path(MODELS, "quantile.json")).write_text(json.dumps({"quantiles": QUANTILES, "tuned_params": tuned,
                                                       "conformal_shift_log_space": qm.shift_.tolist(),
                                                       "val_uncalibrated": raw, "val_calibrated": cal}, indent=2))
 

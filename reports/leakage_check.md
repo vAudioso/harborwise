@@ -25,11 +25,18 @@ Prediction time t = arrival + elapsed hours. The label is departure − t.
 | `hours_since_last_visit_port` | Hours since this ship last left this port (liner rotation). |
 | `vessel_prev_visits_berth` | Earlier visits by this ship to this berth. |
 | `vessel_median_stay_berth_h` | Median of this ship's earlier stays at this berth. |
+| `vessel_max_prev_stay_h` | Longest earlier 2019 stay by this ship (flags ships prone to lay-ups). |
+| `svc_arrivals_berth_1h` | Harbour craft (tugs, pilots, barges) that stopped at this berth in (t-1h, t]. |
+| `svc_arrivals_berth_3h` | Harbour craft that stopped at this berth in (t-3h, t]. |
+| `svc_alongside_berth_now` | Harbour craft stopped at this berth at t (started <= t, not yet left). |
+| `svc_arrivals_berth_since_arrival` | Harbour craft stops at this berth since this ship arrived. |
 | `med_total_berth_type` | Training-period median stay at this berth for this vessel type (fitted on train only). |
 | `med_total_berth` | Training-period median stay at this berth (train only). |
 | `med_total_port` | Training-period median stay in this port (train only). |
 | `med_remaining_cp` | Training-period median remaining time at this berth/port/type for this elapsed time (train only). |
 | `log_berth_train_visits` | log1p of training-period visits at this berth (train only). |
+| `q90_total_berth` | Training-period 90th percentile stay at this berth (train only). |
+| `share_long_stays_berth` | Training-period share of stays over 72 h at this berth (train only). |
 
 Excluded on purpose: `duration`, `ts_end`, `n_calls`, `confidence_min` (computed from the whole stay), `mmsi`, berth and port IDs as numbers (identifiers are only used to look up training-period medians).
 

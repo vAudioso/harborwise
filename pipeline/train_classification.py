@@ -25,7 +25,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from harborwise.config import CLEAR_WITHIN_H, MODELS, REPORTS, SEED
+from harborwise.config import CLEAR_WITHIN_H, MODELS, REPORTS, SEED, seg_path
 from harborwise.data import load_checkpoints, split_xy
 from harborwise.models import ClearWithinClassifier, make_prep
 from harborwise.tracking import Timer, classification_metrics, log_run, reset_experiments
@@ -78,7 +78,7 @@ def main(quick: bool = False):
     # Class balance overall and by port (top 20 ports by rows).
     bal = (cp.assign(pos=(cp["remaining_h"] <= CLEAR_WITHIN_H).astype(int))
            .groupby(["split", "port_id"])["pos"].agg(["size", "mean"]).reset_index())
-    bal.to_csv(REPORTS / "class_balance_by_port.csv", index=False)
+    bal.to_csv(seg_path(REPORTS, "class_balance_by_port.csv"), index=False)
     pos_rate = float(ytr.mean())
     print(f"positive rate (clears within {CLEAR_WITHIN_H} h): train {pos_rate:.3f}, val {yva.mean():.3f}")
 
@@ -124,11 +124,11 @@ def main(quick: bool = False):
     log_run("E09", "classification", f"{kind} | {sampler} | isotonic + tuned threshold", cal_m,
             {"sampler": sampler, "threshold": best.threshold, "calibration": "isotonic on validation"}, cols, None, len(yva),
             notes="calibration and threshold fitted on validation; honest numbers are in E10 (test)")
-    joblib.dump(best, MODELS / "classifier.joblib")
+    joblib.dump(best, seg_path(MODELS, "classifier.joblib"))
     meta = {"model": kind, "sampler": sampler, "N_hours": CLEAR_WITHIN_H, "threshold": best.threshold,
             "val_pr_auc_raw": pr_auc, "val_metrics_calibrated": cal_m, "train_positive_rate": pos_rate,
             "ranking": [{"model": k, "sampler": s, "val_pr_auc": round(a, 4)} for a, k, s, _ in runs]}
-    (MODELS / "classifier.json").write_text(json.dumps(meta, indent=2))
+    (seg_path(MODELS, "classifier.json")).write_text(json.dumps(meta, indent=2))
     print(json.dumps({k: meta[k] for k in ("model", "sampler", "threshold", "val_pr_auc_raw")}, indent=2))
 
 

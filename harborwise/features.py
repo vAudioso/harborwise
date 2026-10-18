@@ -35,11 +35,18 @@ FEATURE_DOCS = {
     "hours_since_last_visit_port": "Hours since this ship last left this port (liner rotation).",
     "vessel_prev_visits_berth": "Earlier visits by this ship to this berth.",
     "vessel_median_stay_berth_h": "Median of this ship's earlier stays at this berth.",
+    "vessel_max_prev_stay_h": "Longest earlier 2019 stay by this ship (flags ships prone to lay-ups).",
+    "svc_arrivals_berth_1h": "Harbour craft (tugs, pilots, barges) that stopped at this berth in (t-1h, t].",
+    "svc_arrivals_berth_3h": "Harbour craft that stopped at this berth in (t-3h, t].",
+    "svc_alongside_berth_now": "Harbour craft stopped at this berth at t (started <= t, not yet left).",
+    "svc_arrivals_berth_since_arrival": "Harbour craft stops at this berth since this ship arrived.",
     "med_total_berth_type": "Training-period median stay at this berth for this vessel type (fitted on train only).",
     "med_total_berth": "Training-period median stay at this berth (train only).",
     "med_total_port": "Training-period median stay in this port (train only).",
     "med_remaining_cp": "Training-period median remaining time at this berth/port/type for this elapsed time (train only).",
     "log_berth_train_visits": "log1p of training-period visits at this berth (train only).",
+    "q90_total_berth": "Training-period 90th percentile stay at this berth (train only).",
+    "share_long_stays_berth": "Training-period share of stays over 72 h at this berth (train only).",
 }
 
 BASE_COLS = ["elapsed_h", "hour", "weekday", "month", "hurricane_season", "arrival_hour", "vt_code"]
@@ -47,8 +54,10 @@ CONTEXT_COLS = ["port_occupancy", "berth_occupancy_others", "port_arrivals_24h_a
                 "port_arrivals_7d_comm", "vessel_prev_visits", "vessel_prev_mean_log_stay",
                 "vessel_prev_visits_port", "vessel_prev_mean_log_stay_port", "vessel_last_stay_port_h",
                 "vessel_median_stay_port_h", "hours_since_last_visit_port", "vessel_prev_visits_berth",
-                "vessel_median_stay_berth_h"]
-STAT_COLS = ["med_total_berth_type", "med_total_berth", "med_total_port", "med_remaining_cp", "log_berth_train_visits"]
+                "vessel_median_stay_berth_h", "vessel_max_prev_stay_h", "svc_arrivals_berth_1h", "svc_arrivals_berth_3h",
+                "svc_alongside_berth_now", "svc_arrivals_berth_since_arrival"]
+STAT_COLS = ["med_total_berth_type", "med_total_berth", "med_total_port", "med_remaining_cp", "log_berth_train_visits",
+             "q90_total_berth", "share_long_stays_berth"]
 RAW_KEYS = ["berth_id", "port_id", "vesseltype"]
 
 
@@ -73,8 +82,8 @@ def _count_in_window(keys_tbl, times_tbl, keys_q, t_lo, t_hi):
 
 
 def context_features(points: pd.DataFrame, visits: pd.DataFrame, port_calls: pd.DataFrame,
-                     self_in_table: np.ndarray) -> pd.DataFrame:
-    """Congestion features at each point's time t. points needs port_id, berth_id, t."""
+                     self_in_table: np.ndarray, service_stops: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Congestion and harbour-craft features at each point's time t. points needs port_id, berth_id, t, arrival_time."""
     t = _ns(points["t"])
     lo_inf = np.full(len(t), np.iinfo(np.int64).min)
     day, week = int(24 * 3600 * 1e9), int(7 * 24 * 3600 * 1e9)
@@ -88,14 +97,27 @@ def context_features(points: pd.DataFrame, visits: pd.DataFrame, port_calls: pd.
                 - _count_in_window(v_port, v_dep, q_port, lo_inf, t)) - selfc
     berth_occ = (_count_in_window(v_berth, v_arr, q_berth, lo_inf, t)
                  - _count_in_window(v_berth, v_dep, q_berth, lo_inf, t)) - selfc
-    return pd.DataFrame({
+    hour = int(3600 * 1e9)
+    out = {
         "port_occupancy": np.clip(port_occ, 0, None),
         "berth_occupancy_others": np.clip(berth_occ, 0, None),
         "port_arrivals_24h_all": _count_in_window(port_calls["port_id"].to_numpy(), _ns(port_calls["ts_start"]),
                                                   q_port, t - day, t),
         "port_departures_24h_comm": _count_in_window(v_port, v_dep, q_port, t - day, t),
         "port_arrivals_7d_comm": _count_in_window(v_port, v_arr, q_port, t - week, t),
-    }, index=points.index)
+    }
+    # Tugs, pilots, bunker barges and other harbour craft stopping at the same berth. Tugs and
+    # pilots typically arrive shortly before a ship sails, so recent arrivals signal departure.
+    if service_stops is not None and len(service_stops):
+        s_berth = service_stops["berth_id"].astype(str).to_numpy()
+        s_start, s_end = _ns(service_stops["start"]), _ns(service_stops["end"])
+        arr = _ns(points["arrival_time"])
+        out["svc_arrivals_berth_1h"] = _count_in_window(s_berth, s_start, q_berth, t - hour, t)
+        out["svc_arrivals_berth_3h"] = _count_in_window(s_berth, s_start, q_berth, t - 3 * hour, t)
+        out["svc_alongside_berth_now"] = np.clip(_count_in_window(s_berth, s_start, q_berth, lo_inf, t)
+                                                 - _count_in_window(s_berth, s_end, q_berth, lo_inf, t), 0, None)
+        out["svc_arrivals_berth_since_arrival"] = _count_in_window(s_berth, s_start, q_berth, arr, t)
+    return pd.DataFrame(out, index=points.index)
 
 
 def vessel_history(visits: pd.DataFrame) -> pd.DataFrame:
@@ -118,6 +140,7 @@ def vessel_history(visits: pd.DataFrame) -> pd.DataFrame:
     out["vessel_last_stay_port_h"] = gp["duration_hours"].shift()
     out["vessel_median_stay_port_h"] = gp["duration_hours"].transform(lambda s: s.expanding().median().shift())
     out["hours_since_last_visit_port"] = (v["arrival_time"] - gp["departure_time"].shift()).dt.total_seconds() / 3600
+    out["vessel_max_prev_stay_h"] = v.groupby("vessel_id", sort=False)["duration_hours"].transform(lambda s: s.expanding().max().shift())
     gb = v.groupby(["vessel_id", "berth_id"], sort=False)
     out["vessel_prev_visits_berth"] = gb.cumcount()
     out["vessel_median_stay_berth_h"] = gb["duration_hours"].transform(lambda s: s.expanding().median().shift())
@@ -139,7 +162,8 @@ def time_features(t: pd.Series, arrival: pd.Series) -> pd.DataFrame:
     }, index=t.index)
 
 
-def build_checkpoints(visits: pd.DataFrame, port_calls: pd.DataFrame, checkpoints=CHECKPOINTS_H) -> pd.DataFrame:
+def build_checkpoints(visits: pd.DataFrame, port_calls: pd.DataFrame, checkpoints=CHECKPOINTS_H,
+                      service_stops: pd.DataFrame | None = None) -> pd.DataFrame:
     """checkpoints=(0,) gives one row per visit at arrival, labelled with the full turnaround time."""
     rows = []
     for cp in checkpoints:
@@ -152,7 +176,7 @@ def build_checkpoints(visits: pd.DataFrame, port_calls: pd.DataFrame, checkpoint
     df = pd.concat([df, time_features(df["t"], df["arrival_time"])], axis=1)
     df["vt_code"] = df["vesseltype"].map(VT_CODE)
     df = df.merge(vessel_history(visits), on="visit_id", how="left")
-    df = pd.concat([df, context_features(df, visits, port_calls, np.ones(len(df), bool))], axis=1)
+    df = pd.concat([df, context_features(df, visits, port_calls, np.ones(len(df), bool), service_stops)], axis=1)
     df["split"] = assign_split(df)
     return df
 
@@ -209,6 +233,19 @@ class FeatureBuilder(BaseEstimator, TransformerMixin):
         self.remaining_ = {k: med(d, list(k), "remaining") for k in
                            [("berth_id", "cp"), ("port_id", "cp"), ("vesseltype", "cp"), ("cp",)]}
         self.berth_visits_ = first.groupby("berth_id").size()
+
+        def stat(keys, fn):
+            g = first.groupby(list(keys))["total"].agg([fn, "size"])
+            return g.loc[g["size"] >= self.min_count, g.columns[0]]
+
+        q90 = lambda x: x.quantile(0.9)  # noqa: E731
+        q90.__name__ = "q90"
+        long = lambda x: (x > 72).mean()  # noqa: E731
+        long.__name__ = "long"
+        self.q90_ = {k: stat(k, q90) for k in [("berth_id",), ("port_id",), ("vesseltype",)]}
+        self.long_ = {k: stat(k, long) for k in [("berth_id",), ("port_id",), ("vesseltype",)]}
+        self.global_q90_ = float(first["total"].quantile(0.9))
+        self.global_long_ = float((first["total"] > 72).mean())
         self.feature_names_ = self._cols()
         return self
 
@@ -235,6 +272,10 @@ class FeatureBuilder(BaseEstimator, TransformerMixin):
             out["med_remaining_cp"] = self._chain(f, self.remaining_, [("berth_id", "cp"), ("port_id", "cp"), ("vesseltype", "cp"), ("cp",)],
                                                   float(np.nanmedian(self.remaining_[("cp",)].to_numpy())))
             out["log_berth_train_visits"] = np.log1p(f["berth_id"].map(self.berth_visits_).fillna(0).to_numpy())
+            chain = [("berth_id",), ("port_id",), ("vesseltype",)]
+        if self.feature_set != "basic" and hasattr(self, "q90_"):  # models saved before these stats existed skip them
+            out["q90_total_berth"] = self._chain(f, self.q90_, chain, self.global_q90_)
+            out["share_long_stays_berth"] = self._chain(f, self.long_, chain, self.global_long_)
         return out[self.feature_names_]
 
     def get_feature_names_out(self, input_features=None):

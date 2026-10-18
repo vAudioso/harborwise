@@ -11,8 +11,8 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from harborwise.config import CHECKPOINTS_H, CLEAR_WITHIN_H, MODELS, QUANTILES
-from harborwise.data import load_berths, load_port_calls, load_visits
+from harborwise.config import CHECKPOINTS_H, CLEAR_WITHIN_H, MODELS, QUANTILES, SEGMENT_CONFIDENCE, SEGMENT_OF, SEGMENTS, seg_path
+from harborwise.data import load_berths, load_port_calls, load_service_stops, load_visits
 from harborwise.features import VT_CODE, context_features, time_features, vessel_history
 from harborwise.optimizer import berth_free_samples, samples_from_quantiles
 
@@ -29,11 +29,12 @@ class Occupant:
 
 class ClearanceService:
     def __init__(self, models_dir=MODELS):
-        self.regressor = joblib.load(models_dir / "regressor.joblib")
-        self.quantile = joblib.load(models_dir / "quantile.joblib")
-        self.classifier = joblib.load(models_dir / "classifier.joblib")
+        # One model set per segment; each occupant is scored by its own ship type's models.
+        self.models = {seg: {name: joblib.load(seg_path(models_dir, f"{name}.joblib", seg))
+                             for name in ("regressor", "quantile", "classifier")} for seg in SEGMENTS}
         self.visits = load_visits()
         self.port_calls = load_port_calls()
+        self.service_stops = load_service_stops()
         self.berths = load_berths().set_index("berth_id")
 
     @cached_property
@@ -88,7 +89,7 @@ class ClearanceService:
         hist = self.history.reindex(rows["visit_id"]).reset_index(drop=True)
         rows = pd.concat([rows, hist.drop(columns=[c for c in hist.columns if c == "visit_id"], errors="ignore")], axis=1)
         in_table = rows["visit_id"].notna().to_numpy()
-        rows = pd.concat([rows, context_features(rows, self.visits, self.port_calls, in_table)], axis=1)
+        rows = pd.concat([rows, context_features(rows, self.visits, self.port_calls, in_table, self.service_stops)], axis=1)
         return rows
 
     def predict(self, berth_id: str, as_of, extra_occupant: Occupant | None = None) -> dict:
@@ -100,7 +101,7 @@ class ClearanceService:
             occupants.append(extra_occupant)
         capacity = int(b["capacity"])
         out = {"berth_id": berth_id, "port_id": int(b["port_id"]), "portname": b["portname"], "as_of": t.isoformat(),
-               "capacity": capacity, "occupants": [], "status": "free"}
+               "capacity": capacity, "occupants": [], "status": "free", "confidence": "high"}
         if not occupants:
             out["clearance_h"] = {"p25": 0.0, "p50": 0.0, "p90": 0.0}
             out["clearance_time"] = {k: t.isoformat() for k in ("p25", "p50", "p90")}
@@ -108,15 +109,20 @@ class ClearanceService:
             return out
 
         X = self.feature_rows(berth_id, t, occupants)
-        Q = self.quantile.predict(X)
-        point = self.regressor.predict(X)
-        p_clear = self.classifier.predict_proba(X)
+        segs = X["vesseltype"].map(SEGMENT_OF).to_numpy()
+        Q, point, p_clear = np.zeros((len(X), len(QUANTILES))), np.zeros(len(X)), np.zeros(len(X))
+        for seg in set(segs):
+            m, rows = self.models[seg], segs == seg
+            Q[rows] = m["quantile"].predict(X[rows])
+            point[rows] = m["regressor"].predict(X[rows])
+            p_clear[rows] = m["classifier"].predict_proba(X[rows])
         samples = []
         for i, o in enumerate(occupants):
             q = dict(zip(("p25", "p50", "p90"), map(float, Q[i])))
             samples.append(samples_from_quantiles(q["p25"], q["p50"], q["p90"]))
             out["occupants"].append({
                 "visit_id": o.visit_id, "vessel_type": o.vesseltype,
+                "model_segment": segs[i], "confidence": SEGMENT_CONFIDENCE[segs[i]],
                 "arrival_time": pd.Timestamp(o.arrival_time).isoformat(),
                 "elapsed_h": round(float(X.loc[i, "elapsed_h"]), 2),
                 "elapsed_beyond_training_range": bool(X.loc[i, "elapsed_h"] > max(CHECKPOINTS_H) * 2),
@@ -127,6 +133,8 @@ class ClearanceService:
         free = berth_free_samples(samples, capacity)
         qs = {f"p{int(q * 100)}": float(np.quantile(free, q)) for q in QUANTILES}
         out["status"] = "free" if len(occupants) < capacity else "occupied"
+        # The forecast is only as reliable as its least predictable occupant.
+        out["confidence"] = "high" if all(s == "liner" for s in segs) else "lower"
         out["clearance_h"] = {k: round(v, 2) for k, v in qs.items()}
         out["clearance_time"] = {k: (t + pd.Timedelta(hours=v)).isoformat(timespec="minutes") for k, v in qs.items()}
         out["samples"] = free

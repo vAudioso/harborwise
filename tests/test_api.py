@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from harborwise.config import MODELS
 
-pytestmark = pytest.mark.skipif(not (MODELS / "quantile.joblib").exists(), reason="run `python -m pipeline.run_all` first")
+pytestmark = pytest.mark.skipif(not (MODELS / "quantile_liner.joblib").exists(), reason="run `python -m pipeline.run_all` first")
 
 
 @pytest.fixture(scope="module")
@@ -38,6 +38,11 @@ def test_predict_clearance(client, busy_berth):
     h = body["clearance_h"]
     assert body["status"] == "occupied" and 0 <= h["p25"] <= h["p50"] <= h["p90"]
     assert body["occupants"] and "remaining_h" in body["occupants"][0]
+    assert body["confidence"] in {"high", "lower"}
+    seg_of = {"cont": "liner", "crui": "liner", "tank": "other", "bulk": "other", "gcar": "other"}
+    for o in body["occupants"]:
+        assert o["model_segment"] == seg_of[o["vessel_type"]]
+        assert o["confidence"] == ("high" if o["model_segment"] == "liner" else "lower")
 
 
 def test_recommend(client, busy_berth):

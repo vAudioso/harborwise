@@ -20,7 +20,7 @@ from sklearn.calibration import calibration_curve  # noqa: E402
 from sklearn.metrics import precision_recall_curve  # noqa: E402
 
 from pipeline.train_quantile import quantile_metrics  # noqa: E402
-from harborwise.config import CLEAR_WITHIN_H, MODELS, REPORTS, SEED  # noqa: E402
+from harborwise.config import CLEAR_WITHIN_H, MODELS, REPORTS, SEED, SEGMENTS, active_segment, seg_path  # noqa: E402
 from harborwise.data import load_checkpoints, split_xy  # noqa: E402
 from harborwise.models import MedianBaseline, RemainingTimeModel  # noqa: E402
 from harborwise.tracking import classification_metrics, log_run, regression_metrics, reset_experiments  # noqa: E402
@@ -55,10 +55,10 @@ def main():
     cp = load_checkpoints()
     Xtr, ytr = split_xy(cp, "train")
     Xte, yte = split_xy(cp, "test")
-    reg = joblib.load(MODELS / "regressor.joblib")
-    clf = joblib.load(MODELS / "classifier.joblib")
-    qm = joblib.load(MODELS / "quantile.joblib")
-    reg_meta = json.loads((MODELS / "regressor.json").read_text())
+    reg = joblib.load(seg_path(MODELS, "regressor.joblib"))
+    clf = joblib.load(seg_path(MODELS, "classifier.joblib"))
+    qm = joblib.load(seg_path(MODELS, "quantile.joblib"))
+    reg_meta = json.loads((seg_path(MODELS, "regressor.json")).read_text())
     if reg_meta.get("dropped_gt_7d_from_train"):
         keep = ~Xtr["flag_gt_7d"].to_numpy()
         Xtr, ytr = Xtr[keep], ytr[keep]
@@ -79,10 +79,10 @@ def main():
     by_type, by_cp = by_group(err, "vesseltype"), by_group(err, "elapsed_h")
     top_ports = err["port_id"].value_counts().head(15).index
     by_port = by_group(err[err["port_id"].isin(top_ports)], "port_id").sort_values("rows", ascending=False)
-    by_type.to_csv(REPORTS / "E10_errors_by_type.csv"); by_cp.to_csv(REPORTS / "E10_errors_by_checkpoint.csv")
-    by_port.to_csv(REPORTS / "E10_errors_by_port.csv")
+    by_type.to_csv(seg_path(REPORTS, "E10_errors_by_type.csv")); by_cp.to_csv(seg_path(REPORTS, "E10_errors_by_checkpoint.csv"))
+    by_port.to_csv(seg_path(REPORTS, "E10_errors_by_port.csv"))
     misses = err.sort_values("abs_err", ascending=False).head(50)
-    misses.to_csv(REPORTS / "E10_biggest_misses.csv", index=False)
+    misses.to_csv(seg_path(REPORTS, "E10_biggest_misses.csv"), index=False)
     R["biggest_misses"] = {"share_of_top50_with_gt_7d_stay": float(misses["flag_gt_7d"].mean()),
                            "median_true_remaining_h_top50": float(misses["remaining_h"].median()),
                            "share_of_top50_merged_from_multiple_calls": float((misses["n_calls"] > 1).mean())}
@@ -112,7 +112,7 @@ def main():
                              for m in [(err["vesseltype"] == t).to_numpy()]}
 
     figures(err, yb, p, p_raw, R)
-    (REPORTS / "E10_final_test.json").write_text(json.dumps(R, indent=2, default=str))
+    (seg_path(REPORTS, "E10_final_test.json")).write_text(json.dumps(R, indent=2, default=str))
     write_report(R, by_type, by_cp, by_port, reg_meta)
     print(json.dumps({"regression_mae": R["regression"]["model"]["mae"], "berth_baseline_mae": R["regression"]["baseline_berth"]["mae"],
                       "pr_auc": R["classification"]["calibrated_at_threshold"]["pr_auc"],
@@ -126,7 +126,7 @@ def figures(err, yb, p, p_raw, R):
     ax.hexbin(err["remaining_h"].clip(upper=lim), err["pred_h"].clip(upper=lim), gridsize=45, bins="log", cmap="Blues")
     ax.plot([0, lim], [0, lim], color="#b0312b", lw=1)
     ax.set(xlabel="Actual hours until departure", ylabel="Predicted hours", title="Remaining time: predicted vs actual (test)")
-    fig.tight_layout(); fig.savefig(FIG / "regression_pred_vs_actual.png"); plt.close(fig)
+    fig.tight_layout(); fig.savefig(seg_path(FIG, "regression_pred_vs_actual.png")); plt.close(fig)
 
     bt = err.groupby("vesseltype")[["abs_err", "abs_err_base"]].mean()
     fig, ax = plt.subplots(figsize=(5.5, 3.4))
@@ -134,7 +134,7 @@ def figures(err, yb, p, p_raw, R):
     ax.bar(x - 0.2, bt["abs_err_base"], 0.4, label="Berth median baseline", color="#b9c8d3")
     ax.bar(x + 0.2, bt["abs_err"], 0.4, label="Model", color="#0b5f8a")
     ax.set_xticks(x, bt.index); ax.set_ylabel("MAE (hours)"); ax.legend(frameon=False); ax.set_title("Test MAE by vessel type")
-    fig.tight_layout(); fig.savefig(FIG / "regression_mae_by_type.png"); plt.close(fig)
+    fig.tight_layout(); fig.savefig(seg_path(FIG, "regression_mae_by_type.png")); plt.close(fig)
 
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.8))
     prec, rec, _ = precision_recall_curve(yb, p)
@@ -146,7 +146,7 @@ def figures(err, yb, p, p_raw, R):
     axes[1].legend(frameon=False)
     axes[1].plot([0, 1], [0, 1], ls="--", color="grey", lw=1)
     axes[1].set(xlabel="Predicted probability", ylabel="Observed frequency", title="Calibration (test)")
-    fig.tight_layout(); fig.savefig(FIG / "classification_pr_calibration.png"); plt.close(fig)
+    fig.tight_layout(); fig.savefig(seg_path(FIG, "classification_pr_calibration.png")); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(4.8, 3.4))
     names = ["P25", "P50", "P90"]
@@ -155,13 +155,14 @@ def figures(err, yb, p, p_raw, R):
     ax.scatter(names, [0.25, 0.5, 0.9], color="#b0312b", zorder=3, label="target")
     ax.set(ylim=(0, 1), ylabel="Share of ships gone by predicted time", title="Clearance window coverage (test)")
     ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(FIG / "quantile_coverage.png"); plt.close(fig)
+    fig.tight_layout(); fig.savefig(seg_path(FIG, "quantile_coverage.png")); plt.close(fig)
 
 
 def write_report(R, by_type, by_cp, by_port, reg_meta):
     r, c, q, u = R["regression"], R["classification"]["calibrated_at_threshold"], R["quantile"], R["unseen_ports"]
     imp = 100 * (1 - r["model"]["mae"] / r["baseline_berth"]["mae"])
-    md = f"""# E10 — Final test report (Nov–Dec 2019, untouched until now)
+    seg = active_segment()
+    md = f"""# E10 — Final test report: {seg} ships ({', '.join(SEGMENTS[seg])}), Nov–Dec 2019
 
 Test rows: {R['test_rows']:,} checkpoints (ships alongside at 1/3/6/12/24 h). Models were chosen on Sep–Oct validation only.
 
@@ -213,7 +214,7 @@ Median interval width: {q['interval_median_width_h']:.1f} h.
 
 Figures: `reports/figures/`. Every number here is also in `E10_final_test.json` and `experiments/experiments.csv` (exp_id E10).
 """
-    (REPORTS / "E10_final_test.md").write_text(md)
+    (seg_path(REPORTS, "E10_final_test.md")).write_text(md)
 
 
 if __name__ == "__main__":
