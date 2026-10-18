@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use HarborWise, please cite it and the dataset it is built on."
+title: "HarborWise: berth-clearance prediction and arrival-speed optimisation"
+authors:
+  - name: "The HarborWise team"
+license: MIT
+repository-code: "https://github.com/vAudioso/harborwise"
+version: "1.0.0"
+date-released: "2026-10-17"
+keywords: [maritime, AIS, port calls, just-in-time arrival, machine learning, XGBoost, IBM Z Datathon]
+references:
+  - type: dataset
+    title: "Port calls and vessel trajectory dataset in the Caribbean with accurate port quays survey"
+    authors:
+      - family-names: Iphar
+        given-names: Clément
+    year: 2024
+    doi: "10.5281/zenodo.10380638"
+    url: "https://zenodo.org/records/10380638"
+    license: CC-BY-NC-SA-4.0

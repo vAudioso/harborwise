@@ -1,7 +1,7 @@
 [project]
 name = "harborwise"
 version = "1.0.0"
-description = "HarborWise backend: berth-clearance prediction and arrival-speed optimisation (IBM Z Datathon)"
+description = "HarborWise: berth-clearance prediction and arrival-speed optimisation (IBM Z Datathon)"
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
