@@ -33,6 +33,7 @@ pipeline/            one script per step (python -m pipeline.<step>); run_all.py
 harborwise/           library code: config, features, models, fuel, optimizer, clearance service, tracking
 api/main.py          FastAPI app; api/contract_v1.py: the website contract (/recommendations, /experiments, /data-quality)
 web/                 the website: index.html (current build), classic.html (earlier build), served at /app/
+                     hw-extras.js adds forecast confidence, ships alongside and the turnaround table
 models/              regressor / classifier / quantile .joblib + .json metadata
 experiments/         experiments.csv, one row per run (E00–E11)
 reports/             Phase 1 audit, leakage check, E10 test report, E11 simulation, figures/

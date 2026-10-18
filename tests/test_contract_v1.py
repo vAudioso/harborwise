@@ -106,3 +106,18 @@ def test_website_is_served(client):
     h = client.get("/health").json()
     assert h["status"] == "ok" and h["runtime"]["platform"]
     assert client.get("/figures/../../README.md").status_code == 404
+
+
+def test_site_addon_panels_have_their_data(client):
+    """web/hw-extras.js shows confidence, ships alongside and the turnaround table from these fields."""
+    page = client.get("/app/").text
+    assert 'src="hw-extras.js"' in page and client.get("/app/hw-extras.js").status_code == 200
+    body = client.post("/recommendations", json=request(*DEMO_VOYAGES[2])).json()  # occupied berth, lower confidence
+    c = body["clearance"]
+    assert c["confidence"] in {"high", "lower"} and c["capacity"] >= 1 and c["occupants"]
+    for o in c["occupants"]:
+        assert {"vessel_type", "arrival_time", "elapsed_h", "remaining_h", "confidence", "p_leaves_within_6h"} <= set(o)
+        assert o["remaining_h"]["p25"] <= o["remaining_h"]["p50"] <= o["remaining_h"]["p90"]
+    turn = client.get("/experiments").json()["turnaround_models"]
+    assert {m["name"].split(" (")[0] for m in turn} >= {"Global median", "Port median", "Random Forest", "HistGradientBoosting", "GradientBoosting"}
+    assert all(finite_nonneg(m["mae_h"], m["rmse_h"]) and 0 <= m["within_1h"] <= 1 for m in turn)
