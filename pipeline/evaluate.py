@@ -101,6 +101,9 @@ def main():
     R["classification"] = {"calibrated_at_threshold": classification_metrics(yb, p, clf.threshold),
                            "raw_at_0.5": classification_metrics(yb, p_raw, 0.5),
                            "positive_rate": float(yb.mean()), "model": f"{type(clf.model).__name__} | {clf.sampler_name}"}
+    frac, mean_pred = calibration_curve(yb, p, n_bins=10, strategy="quantile")
+    R["classification"]["calibration_bins"] = [{"predicted": round(float(mp), 4), "observed": round(float(fr), 4)}
+                                               for mp, fr in zip(mean_pred, frac)]
     log_run("E10", "classification", f"TEST clears within {CLEAR_WITHIN_H}h", R["classification"]["calibrated_at_threshold"],
             n_eval=len(yb), eval_split="test")
 

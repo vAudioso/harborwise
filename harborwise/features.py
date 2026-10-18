@@ -65,59 +65,82 @@ def _ns(s) -> np.ndarray:
     return pd.to_datetime(s).to_numpy(dtype="datetime64[ns]").astype(np.int64)
 
 
-def _count_in_window(keys_tbl, times_tbl, keys_q, t_lo, t_hi):
-    """For each query i, count table rows with key == keys_q[i] and t_lo[i] < time <= t_hi[i]."""
-    out = np.zeros(len(keys_q), dtype=np.int64)
-    order = np.argsort(keys_tbl, kind="stable")
-    kt, tt = keys_tbl[order], times_tbl[order]
-    uniq, starts = np.unique(kt, return_index=True)
-    ends = np.append(starts[1:], len(kt))
-    for k, s, e in zip(uniq, starts, ends):
-        sel = np.nonzero(keys_q == k)[0]
-        if len(sel) == 0:
-            continue
-        arr = np.sort(tt[s:e])
-        out[sel] = np.searchsorted(arr, t_hi[sel], side="right") - np.searchsorted(arr, t_lo[sel], side="right")
-    return out
+class _WindowIndex:
+    """Event times grouped by key and sorted once, so window counts are just two binary searches."""
+
+    def __init__(self, keys, times):
+        order = np.argsort(keys, kind="stable")
+        kt, tt = keys[order], times[order]
+        uniq, starts = np.unique(kt, return_index=True)
+        ends = np.append(starts[1:], len(kt))
+        self.groups = {k: np.sort(tt[s:e]) for k, s, e in zip(uniq.tolist(), starts, ends)}
+
+    def count(self, keys_q, t_lo, t_hi):
+        """For each query i, count events with key == keys_q[i] and t_lo[i] < time <= t_hi[i]."""
+        out = np.zeros(len(keys_q), dtype=np.int64)
+        for k in np.unique(keys_q).tolist():
+            arr = self.groups.get(k)
+            if arr is None:
+                continue
+            sel = np.nonzero(keys_q == k)[0]
+            out[sel] = np.searchsorted(arr, t_hi[sel], side="right") - np.searchsorted(arr, t_lo[sel], side="right")
+        return out
+
+
+class ContextIndex:
+    """Sorted event indexes for the congestion and harbour-craft features. Build once and reuse it
+    (the API does) instead of re-sorting 1.3 M port calls for every prediction."""
+
+    def __init__(self, visits: pd.DataFrame, port_calls: pd.DataFrame, service_stops: pd.DataFrame | None = None):
+        v_port, v_berth = visits["port_id"].to_numpy(), visits["berth_id"].astype(str).to_numpy()
+        v_arr, v_dep = _ns(visits["arrival_time"]), _ns(visits["departure_time"])
+        self.port_arr, self.port_dep = _WindowIndex(v_port, v_arr), _WindowIndex(v_port, v_dep)
+        self.berth_arr, self.berth_dep = _WindowIndex(v_berth, v_arr), _WindowIndex(v_berth, v_dep)
+        self.calls = _WindowIndex(port_calls["port_id"].to_numpy(), _ns(port_calls["ts_start"]))
+        self.svc_start = self.svc_end = None
+        if service_stops is not None and len(service_stops):
+            s_berth = service_stops["berth_id"].astype(str).to_numpy()
+            self.svc_start = _WindowIndex(s_berth, _ns(service_stops["start"]))
+            self.svc_end = _WindowIndex(s_berth, _ns(service_stops["end"]))
 
 
 def context_features(points: pd.DataFrame, visits: pd.DataFrame, port_calls: pd.DataFrame,
-                     self_in_table: np.ndarray, service_stops: pd.DataFrame | None = None) -> pd.DataFrame:
+                     self_in_table: np.ndarray, service_stops: pd.DataFrame | None = None,
+                     index: ContextIndex | None = None) -> pd.DataFrame:
     """Congestion and harbour-craft features at each point's time t. points needs port_id, berth_id, t, arrival_time."""
+    ix = index or ContextIndex(visits, port_calls, service_stops)
     t = _ns(points["t"])
     lo_inf = np.full(len(t), np.iinfo(np.int64).min)
-    day, week = int(24 * 3600 * 1e9), int(7 * 24 * 3600 * 1e9)
-    v_port, v_berth = visits["port_id"].to_numpy(), visits["berth_id"].astype(str).to_numpy()
-    v_arr, v_dep = _ns(visits["arrival_time"]), _ns(visits["departure_time"])
+    day, week, hour = int(24 * 3600 * 1e9), int(7 * 24 * 3600 * 1e9), int(3600 * 1e9)
     q_port, q_berth = points["port_id"].to_numpy(), points["berth_id"].astype(str).to_numpy()
     selfc = self_in_table.astype(int)
 
     # Alongside at t  <=>  arrived <= t and departed > t  ==  (#arrived <= t) - (#departed <= t)
-    port_occ = (_count_in_window(v_port, v_arr, q_port, lo_inf, t)
-                - _count_in_window(v_port, v_dep, q_port, lo_inf, t)) - selfc
-    berth_occ = (_count_in_window(v_berth, v_arr, q_berth, lo_inf, t)
-                 - _count_in_window(v_berth, v_dep, q_berth, lo_inf, t)) - selfc
-    hour = int(3600 * 1e9)
+    port_occ = ix.port_arr.count(q_port, lo_inf, t) - ix.port_dep.count(q_port, lo_inf, t) - selfc
+    berth_occ = ix.berth_arr.count(q_berth, lo_inf, t) - ix.berth_dep.count(q_berth, lo_inf, t) - selfc
     out = {
         "port_occupancy": np.clip(port_occ, 0, None),
         "berth_occupancy_others": np.clip(berth_occ, 0, None),
-        "port_arrivals_24h_all": _count_in_window(port_calls["port_id"].to_numpy(), _ns(port_calls["ts_start"]),
-                                                  q_port, t - day, t),
-        "port_departures_24h_comm": _count_in_window(v_port, v_dep, q_port, t - day, t),
-        "port_arrivals_7d_comm": _count_in_window(v_port, v_arr, q_port, t - week, t),
+        "port_arrivals_24h_all": ix.calls.count(q_port, t - day, t),
+        "port_departures_24h_comm": ix.port_dep.count(q_port, t - day, t),
+        "port_arrivals_7d_comm": ix.port_arr.count(q_port, t - week, t),
     }
     # Tugs, pilots, bunker barges and other harbour craft stopping at the same berth. Tugs and
     # pilots typically arrive shortly before a ship sails, so recent arrivals signal departure.
-    if service_stops is not None and len(service_stops):
-        s_berth = service_stops["berth_id"].astype(str).to_numpy()
-        s_start, s_end = _ns(service_stops["start"]), _ns(service_stops["end"])
+    if ix.svc_start is not None:
         arr = _ns(points["arrival_time"])
-        out["svc_arrivals_berth_1h"] = _count_in_window(s_berth, s_start, q_berth, t - hour, t)
-        out["svc_arrivals_berth_3h"] = _count_in_window(s_berth, s_start, q_berth, t - 3 * hour, t)
-        out["svc_alongside_berth_now"] = np.clip(_count_in_window(s_berth, s_start, q_berth, lo_inf, t)
-                                                 - _count_in_window(s_berth, s_end, q_berth, lo_inf, t), 0, None)
-        out["svc_arrivals_berth_since_arrival"] = _count_in_window(s_berth, s_start, q_berth, arr, t)
+        out["svc_arrivals_berth_1h"] = ix.svc_start.count(q_berth, t - hour, t)
+        out["svc_arrivals_berth_3h"] = ix.svc_start.count(q_berth, t - 3 * hour, t)
+        out["svc_alongside_berth_now"] = np.clip(ix.svc_start.count(q_berth, lo_inf, t) - ix.svc_end.count(q_berth, lo_inf, t), 0, None)
+        out["svc_arrivals_berth_since_arrival"] = ix.svc_start.count(q_berth, arr, t)
     return pd.DataFrame(out, index=points.index)
+
+
+def _prior_median(v: pd.DataFrame, keys: list) -> pd.Series:
+    """Median stay of each group's earlier rows (rows sorted by arrival within the group)."""
+    med = v.groupby(keys, sort=False)["duration_hours"].expanding().median()
+    med = med.reset_index(level=list(range(len(keys))), drop=True).reindex(v.index)
+    return med.groupby([v[k] for k in keys], sort=False).shift()
 
 
 def vessel_history(visits: pd.DataFrame) -> pd.DataFrame:
@@ -138,12 +161,13 @@ def vessel_history(visits: pd.DataFrame) -> pd.DataFrame:
         out["vessel_prev_mean_log_stay" + suffix] = (csum / n_prev.replace(0, np.nan))
     gp = v.groupby(["vessel_id", "port_id"], sort=False)
     out["vessel_last_stay_port_h"] = gp["duration_hours"].shift()
-    out["vessel_median_stay_port_h"] = gp["duration_hours"].transform(lambda s: s.expanding().median().shift())
+    out["vessel_median_stay_port_h"] = _prior_median(v, ["vessel_id", "port_id"])
     out["hours_since_last_visit_port"] = (v["arrival_time"] - gp["departure_time"].shift()).dt.total_seconds() / 3600
-    out["vessel_max_prev_stay_h"] = v.groupby("vessel_id", sort=False)["duration_hours"].transform(lambda s: s.expanding().max().shift())
+    gv = v.groupby("vessel_id", sort=False)["duration_hours"]
+    out["vessel_max_prev_stay_h"] = gv.cummax().groupby(v["vessel_id"], sort=False).shift()
     gb = v.groupby(["vessel_id", "berth_id"], sort=False)
     out["vessel_prev_visits_berth"] = gb.cumcount()
-    out["vessel_median_stay_berth_h"] = gb["duration_hours"].transform(lambda s: s.expanding().median().shift())
+    out["vessel_median_stay_berth_h"] = _prior_median(v, ["vessel_id", "berth_id"])
     # A ship cannot be alongside twice at once, but MMSI errors exist: drop history whose last
     # visit had not ended by this arrival.
     prev_dep = v.groupby("vessel_id")["departure_time"].shift()

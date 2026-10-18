@@ -74,7 +74,49 @@
       "tp": 2685
     },
     "positive_rate": 0.2519556250888921,
-    "model": "RandomForestClassifier | smote_tomek"
+    "model": "RandomForestClassifier | smote_tomek",
+    "calibration_bins": [
+      {
+        "predicted": 0.0048,
+        "observed": 0.0048
+      },
+      {
+        "predicted": 0.012,
+        "observed": 0.0127
+      },
+      {
+        "predicted": 0.0375,
+        "observed": 0.0231
+      },
+      {
+        "predicted": 0.0737,
+        "observed": 0.0499
+      },
+      {
+        "predicted": 0.1169,
+        "observed": 0.0933
+      },
+      {
+        "predicted": 0.2282,
+        "observed": 0.1847
+      },
+      {
+        "predicted": 0.3232,
+        "observed": 0.3207
+      },
+      {
+        "predicted": 0.4593,
+        "observed": 0.4492
+      },
+      {
+        "predicted": 0.6711,
+        "observed": 0.6309
+      },
+      {
+        "predicted": 0.9214,
+        "observed": 0.8954
+      }
+    ]
   },
   "quantile": {
     "coverage_p25": 0.22201678281894469,

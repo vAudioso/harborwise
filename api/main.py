@@ -15,10 +15,14 @@ import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from harborwise.clearance import ClearanceService
-from harborwise.config import CLEAR_WITHIN_H, EXPERIMENTS_CSV, REPORTS, SEGMENT_CONFIDENCE, SEGMENTS, seg_path
+from api.contract_v1 import router as contract_router
+from api.contract_v1 import runtime
+from harborwise.config import CLEAR_WITHIN_H, EXPERIMENTS_CSV, REPORTS, ROOT, SEGMENT_CONFIDENCE, SEGMENTS, seg_path
 from harborwise.fuel import PROFILES, profile, profiles_as_dicts
 from harborwise.optimizer import DEFAULT_FUEL_PRICE, DEFAULT_LAMBDA, DEFAULT_MU, explain, recommend
 
@@ -40,6 +44,12 @@ app = FastAPI(title="HarborWise API", version="1.0.0", lifespan=lifespan,
               description="Berth-clearance forecasts and arrival-speed recommendations for scheduled liner ships (container, cruise); "
                           "tankers, bulk and general cargo are served with lower-confidence models. Replay mode over 2019 Caribbean AIS data.")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.include_router(contract_router)  # website contract v1.0: /recommendations, /experiments, /data-quality, /figures
+WEB = ROOT / "web"
+if WEB.exists():
+    # The website: /app/ (current build) and /app/classic.html (earlier build). Served from this origin,
+    # it finds the API automatically.
+    app.mount("/app", StaticFiles(directory=WEB, html=True), name="web")
 
 VesselType = Literal["cont", "tank", "bulk", "gcar", "crui"]
 
@@ -95,7 +105,8 @@ def _forecast(berth_id: str, as_of) -> dict:
 
 @app.get("/health")
 def health():
-    return {"status": "ok" if "svc" in STATE else "models_missing", "detail": STATE.get("error"), "demo_as_of": DEMO_AS_OF}
+    return {"status": "ok" if "svc" in STATE else "models_missing", "detail": STATE.get("error"), "demo_as_of": DEMO_AS_OF,
+            "runtime": runtime()}
 
 
 @app.get("/ports")
@@ -143,8 +154,9 @@ def recommend_speed(req: RecommendRequest):
     prof = profile(req.vessel_type)
     samples = fc["samples"]
     try:
+        mu = 0.0 if fc["status"] == "free" else req.mu_usd_per_idle_h  # free slot now: no reason to rush
         rec = recommend(prof, req.distance_nm, samples, req.speed_min, req.speed_max,
-                        req.fuel_price_usd_per_t, req.lambda_usd_per_ship_h, req.mu_usd_per_idle_h)
+                        req.fuel_price_usd_per_t, req.lambda_usd_per_ship_h, mu)
     except ValueError as e:
         raise HTTPException(422, str(e))
     as_of = pd.Timestamp(fc["as_of"])
@@ -177,8 +189,9 @@ def vessel_profiles():
             "source": "cubic speed law (Psaraftis & Kontovas 2013); CO2 factor IMO MEPC.308(73). Engine figures are illustrative."}
 
 
-@app.get("/experiments")
-def experiments(task: str | None = None, exp_id: str | None = None, segment: str | None = None):
+@app.get("/experiments/runs")
+def experiment_runs(task: str | None = None, exp_id: str | None = None, segment: str | None = None):
+    """Every logged run (experiments.csv). The website's evaluation page uses GET /experiments instead."""
     if not EXPERIMENTS_CSV.exists():
         return []
     df = pd.read_csv(EXPERIMENTS_CSV)
@@ -202,7 +215,12 @@ def experiments_summary():
     return out
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def root():
-    return {"name": "HarborWise API", "docs": "/docs", "vessel_types": sorted(PROFILES), "demo_as_of": DEMO_AS_OF,
+    return RedirectResponse("/app/" if WEB.exists() else "/docs")
+
+
+@app.get("/info")
+def info():
+    return {"name": "HarborWise API", "docs": "/docs", "website": "/app/", "vessel_types": sorted(PROFILES), "demo_as_of": DEMO_AS_OF,
             "segments": {seg: {"types": list(types), "confidence": SEGMENT_CONFIDENCE[seg]} for seg, types in SEGMENTS.items()}}

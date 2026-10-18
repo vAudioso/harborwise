@@ -13,7 +13,7 @@ import pandas as pd
 
 from harborwise.config import CHECKPOINTS_H, CLEAR_WITHIN_H, MODELS, QUANTILES, SEGMENT_CONFIDENCE, SEGMENT_OF, SEGMENTS, seg_path
 from harborwise.data import load_berths, load_port_calls, load_service_stops, load_visits
-from harborwise.features import VT_CODE, context_features, time_features, vessel_history
+from harborwise.features import VT_CODE, ContextIndex, context_features, time_features, vessel_history
 from harborwise.optimizer import berth_free_samples, samples_from_quantiles
 
 YEAR_START, YEAR_END = pd.Timestamp("2019-01-01"), pd.Timestamp("2019-12-31 23:59:59")
@@ -35,6 +35,8 @@ class ClearanceService:
         self.visits = load_visits()
         self.port_calls = load_port_calls()
         self.service_stops = load_service_stops()
+        self.context_index = ContextIndex(self.visits, self.port_calls, self.service_stops)  # sorted once
+        _ = self.history  # build the ship-history table now, not on the first request
         self.berths = load_berths().set_index("berth_id")
 
     @cached_property
@@ -89,7 +91,7 @@ class ClearanceService:
         hist = self.history.reindex(rows["visit_id"]).reset_index(drop=True)
         rows = pd.concat([rows, hist.drop(columns=[c for c in hist.columns if c == "visit_id"], errors="ignore")], axis=1)
         in_table = rows["visit_id"].notna().to_numpy()
-        rows = pd.concat([rows, context_features(rows, self.visits, self.port_calls, in_table, self.service_stops)], axis=1)
+        rows = pd.concat([rows, context_features(rows, self.visits, self.port_calls, in_table, self.service_stops, self.context_index)], axis=1)
         return rows
 
     def predict(self, berth_id: str, as_of, extra_occupant: Occupant | None = None) -> dict:

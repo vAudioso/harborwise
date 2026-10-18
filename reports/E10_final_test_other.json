@@ -74,7 +74,45 @@
       "tp": 624
     },
     "positive_rate": 0.08855868058322046,
-    "model": "XGBClassifier | none"
+    "model": "XGBClassifier | none",
+    "calibration_bins": [
+      {
+        "predicted": 0.0051,
+        "observed": 0.0041
+      },
+      {
+        "predicted": 0.0061,
+        "observed": 0.0061
+      },
+      {
+        "predicted": 0.0103,
+        "observed": 0.0115
+      },
+      {
+        "predicted": 0.0205,
+        "observed": 0.0169
+      },
+      {
+        "predicted": 0.0297,
+        "observed": 0.0251
+      },
+      {
+        "predicted": 0.0599,
+        "observed": 0.0578
+      },
+      {
+        "predicted": 0.1003,
+        "observed": 0.1077
+      },
+      {
+        "predicted": 0.1898,
+        "observed": 0.1992
+      },
+      {
+        "predicted": 0.4671,
+        "observed": 0.4831
+      }
+    ]
   },
   "quantile": {
     "coverage_p25": 0.25069715560513106,

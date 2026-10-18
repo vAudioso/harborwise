@@ -6,7 +6,7 @@ HarborWise predicts when a berth will free up and recommends a speed for an inco
 
 ## Backend
 
-This repo covers the whole backend: data validation (BE1), features and regression (BE2), classification, imbalance handling, uncertainty and evaluation (BE3), and the optimizer, simulation and API (BE4). The frontend (FE1/FE2) can go in `web/`.
+This repo holds the whole project: data validation (BE1), features and regression (BE2), classification, imbalance handling, uncertainty and evaluation (BE3), the optimizer, simulation and API (BE4), and the website (FE1/FE2) in `web/`, served by the API at **http://127.0.0.1:8000/app/**.
 
 ### Quick start (VS Code)
 
@@ -15,7 +15,10 @@ This repo covers the whole backend: data validation (BE1), features and regressi
    - macOS only: XGBoost needs OpenMP. Install it with `brew install libomp`.
 3. Put the 13 raw CSVs in `data/raw/`. They aren't in the repo because they're too large. Download them from the dataset's Zenodo record ([zenodo.org/records/10380638](https://zenodo.org/records/10380638)). The trained models aren't in the repo either, so run step 4 once after cloning.
 4. Build everything with **Run and Debug → "Pipeline: run everything"**, or `make pipeline`. It takes about 15–20 min. `make quick` is a roughly 5-minute smoke run with fewer trees.
-5. Serve the API with **Run and Debug → "API: run HarborWise"**, or `make api`. Then open http://127.0.0.1:8000/docs.
+5. Serve the API with **Run and Debug → "API: run HarborWise"**, or `make api`. Then open:
+   - **http://127.0.0.1:8000/app/**: the website, connected to the live API (badge "LIVE · HARBORWISE API")
+   - http://127.0.0.1:8000/app/classic.html: the earlier website build
+   - http://127.0.0.1:8000/docs: interactive API docs
 6. Run the tests in the Testing panel, or with `make test`.
 
 On a fresh clone, step 4 rebuilds the data and models before step 5 will work.
@@ -28,7 +31,8 @@ data/processed/      visits, checkpoints, berths, ports, port_calls (parquet)
 pipeline/            one script per step (python -m pipeline.<step>); run_all.py runs them in order
   phase1/            BE1 audit: data-quality profile + berth reconstruction
 harborwise/           library code: config, features, models, fuel, optimizer, clearance service, tracking
-api/main.py          FastAPI app
+api/main.py          FastAPI app; api/contract_v1.py: the website contract (/recommendations, /experiments, /data-quality)
+web/                 the website: index.html (current build), classic.html (earlier build), served at /app/
 models/              regressor / classifier / quantile .joblib + .json metadata
 experiments/         experiments.csv, one row per run (E00–E11)
 reports/             Phase 1 audit, leakage check, E10 test report, E11 simulation, figures/
@@ -132,8 +136,33 @@ The API runs in **replay mode**: `as_of` is any 2019 UTC time, the API looks up 
 | POST | `/predict/clearance` | `{berth_id, as_of}` → P25/P50/P90 hours and timestamps until a slot frees, plus a forecast per occupant |
 | POST | `/recommend` | `{berth_id, as_of, vessel_type, distance_nm, speed_min?, speed_max?, fuel_price_usd_per_t?, lambda_usd_per_ship_h?, mu_usd_per_idle_h?}` → recommended speed, ETA, expected wait, fuel and CO₂ vs service speed, all candidate speeds, and a "why" explanation |
 | GET | `/vessel-profiles` | Fuel model assumptions per vessel type |
-| GET | `/experiments?task=&exp_id=` | Rows from `experiments.csv` (for the model results page) |
-| GET | `/experiments/summary` | E10 and E11 summaries |
+| GET | `/experiments/runs?task=&exp_id=&segment=` | Every logged run from `experiments.csv` |
+| GET | `/experiments/summary` | E10, E11 and turnaround summaries per segment |
+
+**Website contract v1.0** (`api/contract_v1.py`, tested in `tests/test_contract_v1.py`). The website calls these:
+
+| Method | Path | Purpose |
+|---|---|---|
+| POST | `/recommendations` | One voyage: `{vessel_type, daily_fuel_t, destination_port_id, distance_nm, baseline_speed_kn, speed_range, arrival_flexibility_h, max_late_risk, fuel_price_usd_t, planning_time_utc}` → destination berth (with polygon), P25/P50/P90 clearance, every candidate speed with late risk and feasibility, the recommended speed, baseline, explanation and timing |
+| GET | `/experiments` | Test-set results for the Model Results page (liner segment) |
+| GET | `/data-quality` | Dataset audit and EDA counts |
+| GET | `/figures/{name}.png` | Report figures |
+| GET | `/app/` | The website |
+
+How `/recommendations` picks the destination berth:
+1. a full berth used mainly by this ship type
+2. a full berth of the ship's segment
+3. the most occupied berth of this type
+4. the busiest berth
+
+Late risk is the chance the berth stands free for longer than the arrival flexibility before the ship arrives. When the chosen berth has a free slot, there's no queue to time against, so the ship keeps its normal speed (no idle-berth penalty).
+
+**Demo ports:** the website's ports Cartagena, Kingston and San Juan have no ship positions in the 2019 data, so the API uses the nearest port with berth data and says so in every response:
+- Cartagena → Mamonal, in the same bay
+- Kingston → Port Esquivel
+- San Juan → St Thomas
+
+Ports outside the Caribbean and Gulf of Mexico (in the earlier website build) return a clear 404.
 
 Example:
 

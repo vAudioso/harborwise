@@ -61,5 +61,5 @@ def test_validation_errors(client, busy_berth):
 
 
 def test_experiments_endpoint(client):
-    rows = client.get("/experiments", params={"task": "regression"}).json()
+    rows = client.get("/experiments/runs", params={"task": "regression"}).json()
     assert rows and {"exp_id", "model", "mae"} <= set(rows[0])
