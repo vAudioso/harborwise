@@ -3,31 +3,73 @@
   "configurations": [
     {
       "name": "API: run HarborWise (uvicorn --reload)",
-      "type": "debugpy", "request": "launch", "module": "uvicorn",
-      "args": ["api.main:app", "--reload", "--port", "8000"],
-      "cwd": "${workspaceFolder}", "justMyCode": true
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "api.main:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true,
+      "serverReadyAction": {
+        "pattern": "Uvicorn running on (https?://\\S+)",
+        "uriFormat": "%s/app/",
+        "action": "openExternally"
+      }
     },
     {
       "name": "Pipeline: run everything",
-      "type": "debugpy", "request": "launch", "module": "pipeline.run_all", "cwd": "${workspaceFolder}"
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pipeline.run_all",
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "Pipeline: quick smoke run",
-      "type": "debugpy", "request": "launch", "module": "pipeline.run_all", "args": ["--quick"], "cwd": "${workspaceFolder}"
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pipeline.run_all",
+      "args": [
+        "--quick"
+      ],
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "Pipeline: pick one step",
-      "type": "debugpy", "request": "launch", "module": "pipeline.${input:step}", "cwd": "${workspaceFolder}"
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pipeline.${input:step}",
+      "cwd": "${workspaceFolder}"
     },
     {
       "name": "Tests: pytest",
-      "type": "debugpy", "request": "launch", "module": "pytest", "args": ["-q"], "cwd": "${workspaceFolder}"
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-q"
+      ],
+      "cwd": "${workspaceFolder}"
     }
   ],
   "inputs": [
     {
-      "id": "step", "type": "pickString", "description": "Pipeline step",
-      "options": ["build_dataset", "build_features", "train_turnaround", "train_regression", "train_classification", "train_quantile", "evaluate", "simulate"]
+      "id": "step",
+      "type": "pickString",
+      "description": "Pipeline step",
+      "options": [
+        "build_dataset",
+        "build_features",
+        "train_turnaround",
+        "train_regression",
+        "train_classification",
+        "train_quantile",
+        "evaluate",
+        "simulate"
+      ]
     }
   ]
 }
